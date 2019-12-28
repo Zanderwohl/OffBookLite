@@ -18,6 +18,7 @@ class Window(Frame):
 
         self.add_context_drop()
 
+        self.add_context_switcher()
         self.add_menu_frame()
         self.add_persons_frame()
         self.add_institutions_frame()
@@ -34,6 +35,19 @@ class Window(Frame):
         context_menu.add_command(label="Persons", command=lambda: self.show_frame('Persons'))
         context_menu.add_command(label="Institutions", command=lambda: self.show_frame('Institutions'))
         self.menu.add_cascade(label="Context", menu=context_menu)
+
+    def add_context_switcher(self):
+        context_switcher = Frame(self, bg="#232323")
+        context_switcher.pack(side=BOTTOM, fill=BOTH)
+        self.add_context_button(context_switcher, 'Home', 'Menu')
+        self.add_context_button(context_switcher, 'Persons', 'Persons')
+        self.add_context_button(context_switcher, 'Institutions', 'Institutions')
+        self.frames.update({'Context Switcher': context_switcher})
+
+    def add_context_button(self, context_switcher, text, frame_name):
+        button = Button(context_switcher, text=text, command=lambda: self.show_frame(frame_name),
+                        height=2, bg="#555555", fg="#DEDEDE")
+        button.pack(side=LEFT, padx=10, pady=10)
 
     def add_calc_drop(self):
         calc_menu = Menu(self.menu)
