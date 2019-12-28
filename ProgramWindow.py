@@ -89,33 +89,62 @@ class Window(Frame):
         persons = self.controller.get_persons()
 
         for i in range(len(persons)):
-            frame = self.generate_person_frame_small(persons[i], self.frames['Persons List'], i)
+            frame = self.add_person_frame(persons[i], self.frames['Persons List'], i)
             frame.pack(fill=X, expand=True)
             # label = persons[i]['fName'] + " " + persons[i]['lName']
             # new_button = Button(self.frames['Persons'], text=label)
             # new_button.grid(column=0, row=i)
 
-    def generate_person_frame_small(self, person, parent, index):
+    def add_person_frame(self, person, parent, index):
         # label = person['fName'] + " " + person['lName']
         # new_button = Button(parent, text=label)
         if index % 2 == 0:
             color = '#3F3F3F'
         else:
             color = '#303030'
-        frame = Frame(parent, bg=color)
+        meta_frame = Frame(parent)
+        frame = self.generate_person_frame_small(person, parent, index, meta_frame, None, color)
+        return meta_frame
+
+    def generate_person_frame_small(self, person, parent, index, meta_frame, old_frame, color):
+        if old_frame is not None:
+            old_frame.pack_forget()
+        frame = Frame(meta_frame, bg=color)
         frame.columnconfigure(1, weight=1)
         frame.columnconfigure(2, weight=2)
         frame.columnconfigure(3, weight=1)
         name_text = person['fName'] + ' ' + person['lName']
         name_label = Label(frame, text=name_text, padx=10, pady=10, bg=color, fg="#DEDEDE")
         name_label.grid(column=1, row=0)
-        edit_button = Button(frame, text="More", padx=10, command=lambda : self.generate_person_frame_large(person, parent, index))
-        edit_button.grid(column=3, row=0)
+        expand_button = Button(frame, text="More", padx=10,
+                               command=lambda: self.generate_person_frame_large(
+                                   person, parent, index, meta_frame, frame, color))
+        expand_button.grid(column=3, row=0)
         # new_button.grid(column=0, row=index)
+        frame.pack(fill=X, expand=True)
         return frame
 
-    def generate_person_frame_large(self, person, parent, index):
-        print("Switcheroo on " + person['fName'])
+    def generate_person_frame_large(self, person, parent, index, meta_frame, old_frame, color):
+        if old_frame is not None:
+            old_frame.pack_forget()
+        frame = Frame(meta_frame, bg=color)
+        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(2, weight=2)
+        frame.columnconfigure(3, weight=1)
+        frame.rowconfigure(0, weight=1)
+        frame.rowconfigure(1, weight=1)
+        frame.rowconfigure(2, weight=1)
+        frame.rowconfigure(3, weight=1)
+        frame.rowconfigure(5, weight=1)
+        name_text = person['fName'] + ' ' + person['lName']
+        name_label = Label(frame, text=name_text, padx=10, pady=10, bg=color, fg="#DEDEDE")
+        name_label.grid(column=1, row=0)
+        expand_button = Button(frame, text="Less", padx=10,
+                               command=lambda: self.generate_person_frame_small(
+                                   person, parent, index, meta_frame, frame, color))
+        expand_button.grid(column=3, row=0)
+        # new_button.grid(column=0, row=index)
+        frame.pack(fill=X, expand=True)
 
     def add_institutions_frame(self):
         institutions_frame = Frame(self, bg="#555555")
@@ -151,7 +180,7 @@ def show_window(controller):
 
     root.state('zoomed')  # maximizes window
 
-    controller.set_view(app)    # give this to the controller
+    controller.set_view(app)  # give this to the controller
 
     root.mainloop()  # show window
 

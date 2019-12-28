@@ -25,7 +25,13 @@ def persons():
         "fName": "Eulalia",
         "lName": "Lowry",
         "institutionId": 2
-    }]
+    }, {
+        "id": 7,
+        "fName": "Seven",
+        "lName": "The Seven Boy",
+        "institutionId": 2
+    }
+    ]
     return query
 
 
