@@ -17,12 +17,12 @@ def persons():
         "institutionId": 3
     }, {
         "id": 3,
-        "fName": "Emily",
+        "fName": "Emilie",
         "lName": "Swonger",
         "institutionId": 2
     }, {
         "id": 4,
-        "fName": "Alexander",
+        "fName": "Eulalia",
         "lName": "Lowry",
         "institutionId": 2
     }]
