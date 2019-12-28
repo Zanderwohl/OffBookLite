@@ -1,6 +1,5 @@
 from tkinter import *
 
-
 class Window(Frame):
 
     def __init__(self, master, controller):
@@ -51,7 +50,8 @@ class Window(Frame):
         main_menu_frame = Frame(self, bg="#DEDEDE")
         button_persons = Button(main_menu_frame, text="Persons", command=lambda: self.show_frame('Persons'))
         button_persons.pack()
-        button_institutions = Button(main_menu_frame, text="Institutions", command=lambda: self.show_frame('Institutions'))
+        button_institutions = Button(main_menu_frame, text="Institutions",
+                                     command=lambda: self.show_frame('Institutions'))
         button_institutions.pack()
         self.frames.update({'Menu': main_menu_frame})
 
