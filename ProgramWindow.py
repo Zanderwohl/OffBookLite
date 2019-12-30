@@ -23,6 +23,8 @@ class Window(Frame):
         self.add_menu_frame()
         self.add_persons_frame()
         self.add_institutions_frame()
+        self.add_productions_frame()
+        self.add_events_frame()
 
         self.show_frame('Menu')
 
@@ -43,6 +45,8 @@ class Window(Frame):
         self.add_context_button(context_switcher, 'Home', 'Menu')
         self.add_context_button(context_switcher, 'Persons', 'Persons')
         self.add_context_button(context_switcher, 'Institutions', 'Institutions')
+        self.add_context_button(context_switcher, 'Productions', 'Productions')
+        self.add_context_button(context_switcher, 'Events', 'Events')
         self.frames.update({'Context Switcher': context_switcher})
 
     def add_context_button(self, context_switcher, text, frame_name):
@@ -137,7 +141,7 @@ class Window(Frame):
         frame.rowconfigure(3, weight=1)
         frame.rowconfigure(5, weight=1)
         name_text = person['fName'] + ' ' + person['lName']
-        name_label = Label(frame, text=name_text, padx=10, pady=10, bg=color, fg="#DEDEDE")
+        name_label = Label(frame, text=name_text, padx=10, pady=60, bg=color, fg="#DEDEDE")
         name_label.grid(column=1, row=0)
         expand_button = Button(frame, text="Less", padx=10,
                                command=lambda: self.generate_person_frame_small(
@@ -147,10 +151,22 @@ class Window(Frame):
         frame.pack(fill=X, expand=True)
 
     def add_institutions_frame(self):
-        institutions_frame = Frame(self, bg="#555555")
-        button = Button(institutions_frame, text="You're in Institutions")
+        institutions_frame = Frame(self, bg='#555555')
+        button = Button(institutions_frame, text='You\'re in Institutions')
         button.pack()
         self.frames.update({'Institutions': institutions_frame})
+
+    def add_productions_frame(self):
+        productions_frame = Frame(self, bg='#555555')
+        button = Button(productions_frame, text='You\'re in Productions')
+        button.pack()
+        self.frames.update({'Productions': productions_frame})
+
+    def add_events_frame(self):
+        events_frame = Frame(self, bg='#555555')
+        button = Button(events_frame, text='You\'re in Events')
+        button.pack()
+        self.frames.update({'Events': events_frame})
 
     def show_frame(self, name):
         print('Switching to frame "' + name + '".')
