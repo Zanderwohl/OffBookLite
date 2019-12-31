@@ -66,8 +66,8 @@ class Window(Frame):
         self.controller.exit(1)
 
     def add_menu_frame(self):
-        main_menu_frame = Frame(self, bg="#555555")
-        button_persons = Button(main_menu_frame, text="Persons", command=lambda: self.show_frame('Persons'))
+        main_menu_frame = Frame(self, bg='#555555')
+        button_persons = Button(main_menu_frame, text='Persons', command=lambda: self.show_frame('Persons'))
         button_persons.pack()
         button_institutions = Button(main_menu_frame, text="Institutions",
                                      command=lambda: self.show_frame('Institutions'))
@@ -75,7 +75,7 @@ class Window(Frame):
         self.frames.update({'Menu': main_menu_frame})
 
     def add_persons_frame(self):
-        persons_frame = Frame(self, bg="#555555")
+        persons_frame = Frame(self, bg='#555555')
         # button = Button(persons_frame, text="You're in Persons")
         # button.pack()
         self.frames['Persons List'] = None
@@ -158,9 +158,79 @@ class Window(Frame):
 
     def add_productions_frame(self):
         productions_frame = Frame(self, bg='#555555')
-        button = Button(productions_frame, text='You\'re in Productions')
-        button.pack()
+        # button = Button(productions_frame, text='You\'re in Productions')
+        # button.pack()
+        self.frames['Productions List'] = None
         self.frames.update({'Productions': productions_frame})
+
+    def update_productions_frame(self, persons):
+        if self.frames['Productions List'] is not None:
+            print("Replacing it!")
+            self.frames['Productions List'].pack_forget()
+            self.frames['Productions List'].destroy()
+
+        self.frames['Productions List'] = Frame(self.frames['Productions'])
+        self.frames['Productions List'].pack(fill=X)
+
+        productions = self.controller.get_productions()
+
+        for i in range(len(productions)):
+            frame = self.add_production_frame(productions[i], self.frames['Productions List'], i)
+            frame.pack(fill=X, expand=True)
+            # label = persons[i]['fName'] + " " + persons[i]['lName']
+            # new_button = Button(self.frames['Persons'], text=label)
+            # new_button.grid(column=0, row=i)
+
+    def add_production_frame(self, person, parent, index):
+        # label = person['fName'] + " " + person['lName']
+        # new_button = Button(parent, text=label)
+        if index % 2 == 0:
+            color = '#3F3F3F'
+        else:
+            color = '#303030'
+        meta_frame = Frame(parent)
+        frame = self.generate_production_frame_small(person, parent, index, meta_frame, None, color)
+        return meta_frame
+
+    def generate_production_frame_small(self, production, parent, index, meta_frame, old_frame, color):
+        if old_frame is not None:
+            old_frame.pack_forget()
+        frame = Frame(meta_frame, bg=color)
+        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(2, weight=2)
+        frame.columnconfigure(3, weight=1)
+        name_text = production['name']
+        name_label = Label(frame, text=name_text, padx=10, pady=10, bg=color, fg="#DEDEDE")
+        name_label.grid(column=1, row=0)
+        expand_button = Button(frame, text="More", padx=10,
+                               command=lambda: self.generate_production_frame_large(
+                                   production, parent, index, meta_frame, frame, color))
+        expand_button.grid(column=3, row=0)
+        # new_button.grid(column=0, row=index)
+        frame.pack(fill=X, expand=True)
+        return frame
+
+    def generate_production_frame_large(self, production, parent, index, meta_frame, old_frame, color):
+        if old_frame is not None:
+            old_frame.pack_forget()
+        frame = Frame(meta_frame, bg=color)
+        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(2, weight=2)
+        frame.columnconfigure(3, weight=1)
+        frame.rowconfigure(0, weight=1)
+        frame.rowconfigure(1, weight=1)
+        frame.rowconfigure(2, weight=1)
+        frame.rowconfigure(3, weight=1)
+        frame.rowconfigure(5, weight=1)
+        name_text = production['name']
+        name_label = Label(frame, text=name_text, padx=10, pady=60, bg=color, fg="#DEDEDE")
+        name_label.grid(column=1, row=0)
+        expand_button = Button(frame, text="Less", padx=10,
+                               command=lambda: self.generate_production_frame_small(
+                                   production, parent, index, meta_frame, frame, color))
+        expand_button.grid(column=3, row=0)
+        # new_button.grid(column=0, row=index)
+        frame.pack(fill=X, expand=True)
 
     def add_events_frame(self):
         events_frame = Frame(self, bg='#555555')

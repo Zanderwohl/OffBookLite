@@ -17,6 +17,12 @@ class ProgramController:
         if context_name == 'Persons':
             self.model.query_persons()
             self.view.update_persons_frame(self.model.get_persons())
+        if context_name == 'Productions':
+            self.model.query_productions()
+            self.view.update_productions_frame(self.model.get_productions())
 
     def get_persons(self):
         return self.model.get_persons()
+
+    def get_productions(self):
+        return self.model.get_productions()
