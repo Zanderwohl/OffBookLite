@@ -1,3 +1,4 @@
+import SQLiteDatabase
 import SkeletonDatabase
 
 
@@ -5,11 +6,13 @@ class Model:
     def __init__(self):
         self.persons = None
         self.productions = None
+        self.institution = 3
+        SQLiteDatabase.init_database()
         print('The model has been instantiated.')
 
     def query_persons(self):
         print('Query of persons...')
-        self.persons = SkeletonDatabase.persons()
+        self.persons = SQLiteDatabase.get_persons(self.institution)
 
     def get_persons(self):
         return self.persons
