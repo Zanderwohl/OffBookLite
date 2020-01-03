@@ -73,6 +73,13 @@ def get_persons(institution_id):
     return convert_query(['id', 'fName', 'lName', 'institutionId'])
 
 
+def create_person(f_name, l_name, institution_id):
+    args = (f_name, l_name, institution_id)
+    dbc.execute('''INSERT INTO Persons (fName, lName, institutionId)
+    VALUES (?, ?, ?)''', args)
+    db.commit()
+
+
 def get_productions(production_id=None):
     if production_id is not None:
         args = (production_id,)
@@ -84,11 +91,28 @@ def get_productions(production_id=None):
     return convert_query(['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
 
 
+def create_production(name, description, institution_id, start_date, end_date):
+    args = (name, description, institution_id, start_date, end_date)
+    dbc.execute('''INSERT INTO Productions (name, description, institutionId, startDate, endDate)
+    VALUES (?, ?, ?, ?, ?)''', args)
+    db.commit()
+
+
 def get_institutions():
     dbc.execute('''SELECT * FROM Institutions''')
     return convert_query(['id', 'name'])
 
 
-# init_database()
-# # db.commit()
+def create_institution(name):
+    args = (name,)
+    dbc.execute('''INSERT INTO Institutions (name) VALUES (?)''', args)
+    db.commit()
+
+
+init_database()
+# create_institution('Something Else')
+# create_production('Something Rotten', 'A musical I liked very much',
+#                  2, '0', '0') # 2008-11-11 13:23:44
+# create_person('Rachel', 'Smort', 2)
+db.commit()
 # install_database()
