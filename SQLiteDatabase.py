@@ -28,7 +28,7 @@ def install_database():
     CREATE TABLE Institutions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL
-    )''')
+    );''')
     dbc.execute('''
     CREATE TABLE Persons(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,7 +36,17 @@ def install_database():
         lName TEXT DEFAULT '',
         institutionId INT NOT NULL,
         FOREIGN KEY (institutionId) REFERENCES Institutions(id)
-    )''')
+    );''')
+    dbc.execute('''CREATE TABLE Productions (
+        id            INTEGER  PRIMARY KEY,
+        name          TEXT,
+        description   TEXT,
+        institutionId INTEGER  REFERENCES Institutions (id),
+        startDate     DATETIME,
+        endDate       DATETIME,
+        deleted       BOOLEAN  DEFAULT (false) 
+    );
+    ''')
     db.commit()
 
 
@@ -62,5 +72,23 @@ def get_persons(institution_id):
     WHERE institutionId=?''', args)
     return convert_query(['id', 'fName', 'lName', 'institutionId'])
 
+
+def get_productions(production_id=None):
+    if production_id is not None:
+        args = (production_id,)
+        dbc.execute('''SELECT * FROM Productions
+        WHERE productionId = ?
+        ''', args)
+    else:
+        dbc.execute('''SELECT * FROM Productions''')
+    return convert_query(['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
+
+
+def get_institutions():
+    dbc.execute('''SELECT * FROM Institutions''')
+    return convert_query(['id', 'name'])
+
+
 # init_database()
+# # db.commit()
 # install_database()
