@@ -31,4 +31,6 @@ class Model:
         self.institutions = SQLiteDatabase.get_institutions()
 
     def name_find(self, beginning, production=None):
-        return NameFinder.find(beginning, production)
+        if self.persons is None:
+            self.persons = SQLiteDatabase.get_persons(self.institution)
+        return NameFinder.find(beginning, self.persons)
