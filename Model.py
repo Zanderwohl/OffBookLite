@@ -8,7 +8,7 @@ class Model:
         self.productions = None
         self.institution = 3
         SQLiteDatabase.init_database()
-        print('The model has been instantiated.')
+        print('Model initialized.')
 
     def query_persons(self):
         print('Query of persons...')

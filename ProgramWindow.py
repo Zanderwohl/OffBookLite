@@ -239,13 +239,14 @@ class Window(Frame):
         self.frames.update({'Events': events_frame})
 
     def show_frame(self, name):
-        print('Switching to frame "' + name + '".')
+        print('Window switching to frame "' + name + '".')
         self.controller.switch_to(name)
         if self.current_frame is not None:
             self.current_frame.pack_forget()
         frame = self.frames[name]
         self.current_frame = frame
         frame.pack(fill=BOTH, expand=True)
+        print('Window switched.')
 
 
 def show_window(controller):

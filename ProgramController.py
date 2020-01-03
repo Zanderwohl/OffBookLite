@@ -3,7 +3,7 @@ from Model import Model
 
 class ProgramController:
     def __init__(self):
-        print('Controller initialized!')
+        print('Controller initialized.')
         self.current_context = None
         self.model = Model()
         self.view = None
@@ -12,7 +12,7 @@ class ProgramController:
         self.view = view
 
     def switch_to(self, context_name):
-        print('Controller switching to ' + context_name + '!')
+        print('Controller switching to "' + context_name + '".')
         self.current_context = context_name
         if context_name == 'Persons':
             self.model.query_persons()
@@ -20,6 +20,7 @@ class ProgramController:
         if context_name == 'Productions':
             self.model.query_productions()
             self.view.update_productions_frame(self.model.get_productions())
+        print('Controller switched.')
 
     def get_persons(self):
         return self.model.get_persons()
