@@ -71,8 +71,13 @@ def convert_query(keys):
     return query
 
 
-def get_persons(institution_id):
+def get_persons(institution_id, production_id):
     """Gets list of all persons in an institution."""
+    if production_id is not None:
+        print('Filtering persons by production id is not implemented yet.')
+        # TODO: Write another query that filters by participation in productions.
+    else:
+        pass    # TODO: Push the normal query under here.
     args = (institution_id,)
     dbc.execute('''SELECT * FROM Persons
     WHERE institutionId=?''', args)

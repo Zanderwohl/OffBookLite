@@ -4,6 +4,7 @@ import NameFinder
 
 
 class Model:
+    """Manages all the data for the program, and deals with the database."""
     def __init__(self):
         self.persons = None
         self.productions = None
@@ -13,24 +14,40 @@ class Model:
         print('Model initialized.')
 
     def query_persons(self):
+        """Load the list of persons."""
         print('Query of persons...')
         self.persons = SQLiteDatabase.get_persons(self.institution)
 
     def get_persons(self):
+        """Get the list of persons."""
+        if self.persons is None:
+            self.query_persons()
         return self.persons
 
     def query_productions(self):
+        """Load the list of productions."""
         print('Query of productions...')
         self.productions = SQLiteDatabase.get_productions()
 
     def get_productions(self):
+        """Get the list of productions."""
+        if self.productions is None:
+            self.query_productions()
         return self.productions
 
-    def get_institutions(self):
+    def query_institutions(self):
+        """Load the list of institutions."""
         print('Query of institutions...')
         self.institutions = SQLiteDatabase.get_institutions()
 
+    def get_institutions(self):
+        """Get the list of institutions."""
+        if self.institutions is None:
+            self.query_institutions()
+        return self.institutions
+
     def name_find(self, beginning, production=None):
+        """Find persons by a name."""
         if self.persons is None:
-            self.persons = SQLiteDatabase.get_persons(self.institution)
+            self.persons = SQLiteDatabase.get_persons(self.institution, production)
         return NameFinder.find(beginning, self.persons)
