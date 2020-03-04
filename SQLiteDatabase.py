@@ -6,6 +6,8 @@ db_file = 'test.db'
 
 
 def init_database():
+    """Opens the database, places in it and the cursor in memory,
+    and create the db file if it doesn't exist."""
     global db, dbc
 
     # if the db file does not exist, we have to install.
@@ -24,6 +26,7 @@ def init_database():
 
 
 def install_database():
+    """Creates the tables in the database."""
     dbc.execute('''
     CREATE TABLE Institutions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,6 +54,8 @@ def install_database():
 
 
 def convert_query(keys):
+    """Takes the results of a query (stored in this file's scope)
+    and turns it into an array of dictionaries."""
     query = []
     while True:
         next_row = dbc.fetchone()
@@ -67,6 +72,7 @@ def convert_query(keys):
 
 
 def get_persons(institution_id):
+    """Gets list of all persons in an institution."""
     args = (institution_id,)
     dbc.execute('''SELECT * FROM Persons
     WHERE institutionId=?''', args)
@@ -74,6 +80,7 @@ def get_persons(institution_id):
 
 
 def create_person(f_name, l_name, institution_id):
+    """Add a new person into the database."""
     args = (f_name, l_name, institution_id)
     dbc.execute('''INSERT INTO Persons (fName, lName, institutionId)
     VALUES (?, ?, ?)''', args)
@@ -81,6 +88,7 @@ def create_person(f_name, l_name, institution_id):
 
 
 def get_productions(production_id=None):
+    """Gets a list of productions from a particular institution."""
     if production_id is not None:
         args = (production_id,)
         dbc.execute('''SELECT * FROM Productions
@@ -92,6 +100,7 @@ def get_productions(production_id=None):
 
 
 def create_production(name, description, institution_id, start_date, end_date):
+    """Creates a new production in the database."""
     args = (name, description, institution_id, start_date, end_date)
     dbc.execute('''INSERT INTO Productions (name, description, institutionId, startDate, endDate)
     VALUES (?, ?, ?, ?, ?)''', args)
@@ -99,20 +108,17 @@ def create_production(name, description, institution_id, start_date, end_date):
 
 
 def get_institutions():
+    """Get list of institutions."""
     dbc.execute('''SELECT * FROM Institutions''')
     return convert_query(['id', 'name'])
 
 
 def create_institution(name):
+    """Create an institution in the database."""
     args = (name,)
     dbc.execute('''INSERT INTO Institutions (name) VALUES (?)''', args)
     db.commit()
 
 
 init_database()
-# create_institution('Something Else')
-# create_production('Something Rotten', 'A musical I liked very much',
-#                  2, '0', '0') # 2008-11-11 13:23:44
-# create_person('Rachel', 'Smort', 2)
 db.commit()
-# install_database()
