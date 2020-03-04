@@ -8,4 +8,3 @@ import SkeletonDatabase
 controller = ProgramController()
 root, app = ProgramWindow.show_window(controller)
 # print("app: " + type(app))
-
