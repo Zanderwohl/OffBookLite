@@ -10,6 +10,7 @@ class Model:
         self.productions = None
         self.institutions = None
         self.institution = 3
+        self.events = None
         SQLiteDatabase.init_database()
         print('Model initialized.')
 
@@ -45,6 +46,17 @@ class Model:
         if self.institutions is None:
             self.query_institutions()
         return self.institutions
+
+    def query_events(self):
+        """Load the list of events."""
+        print('Query of events.')
+        self.events = SQLiteDatabase.get_events()
+
+    def get_events(self):
+        """Get the list of events."""
+        if self.events is None:
+            self.query_events()
+        return self.events
 
     def name_find(self, beginning, production=None):
         """Find persons by a name."""

@@ -50,6 +50,16 @@ def install_database():
         deleted       BOOLEAN  DEFAULT (false) 
     );
     ''')
+    dbc.execute('''CREATE TABLE Events(
+        id              INTEGER PRIMARY KEY,
+        name            TEXT,
+        description     TEXT,
+        startDate       DATETIME,
+        endDate         DATETIME,
+        productionId    INTEGER REFERENCES Productions(id),
+        deleted         BOOLEAN DEFAULT (false)
+    );
+    ''')
     db.commit()
 
 
@@ -123,6 +133,18 @@ def create_institution(name):
     args = (name,)
     dbc.execute('''INSERT INTO Institutions (name) VALUES (?)''', args)
     db.commit()
+
+
+def get_events(institution_id=None, production_id=None, event_id=None):
+    if institution_id is None:
+        institution_id = "ANY"
+    if production_id is None:
+        production_id = "ANY"
+    if event_id is None:
+        event_id = "ANY"
+    args = (institution_id, production_id, event_id)
+    dbc.execute('''''', args)
+    return convert_query([])
 
 
 init_database()
