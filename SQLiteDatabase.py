@@ -1,4 +1,5 @@
 import sqlite3
+import SQLiteTestEntries
 
 db = None   # The database object
 dbc = None  # The database cursor
@@ -60,6 +61,7 @@ def install_database():
         deleted         BOOLEAN DEFAULT (false)
     );
     ''')
+    SQLiteTestEntries.create(dbc)
     db.commit()
 
 
