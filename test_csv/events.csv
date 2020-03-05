@@ -1,0 +1,2 @@
+id,name,description,startDate,endDate,productionId,deleted
+0,None,No event.,1970-01-01 00:00:00,2038-01-01 00:00:00,0,0

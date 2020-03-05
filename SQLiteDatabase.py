@@ -31,15 +31,16 @@ def install_database():
     dbc.execute('''
     CREATE TABLE Institutions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
+        name TEXT NOT NULL,
+        deleted BOOLEAN DEFAULT (false)
     );''')
     dbc.execute('''
     CREATE TABLE Persons(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         fName TEXT DEFAULT '',
         lName TEXT DEFAULT '',
-        institutionId INT NOT NULL,
-        FOREIGN KEY (institutionId) REFERENCES Institutions(id)
+        institutionId INTEGER REFERENCES Institutions(id),
+        deleted         BOOLEAN DEFAULT (false)
     );''')
     dbc.execute('''CREATE TABLE Productions (
         id            INTEGER  PRIMARY KEY,
@@ -48,7 +49,7 @@ def install_database():
         institutionId INTEGER  REFERENCES Institutions (id),
         startDate     DATETIME,
         endDate       DATETIME,
-        deleted       BOOLEAN  DEFAULT (false) 
+        deleted         BOOLEAN DEFAULT (false) 
     );
     ''')
     dbc.execute('''CREATE TABLE Events(
