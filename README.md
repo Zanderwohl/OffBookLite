@@ -2,6 +2,8 @@
 
 A note-taker and distributor for stage managers.
 
+**This software is not yet functional.**
+
 * Notes can be assigned to specific people or groups of people.
 
   * A line note can be assigned to an actor. When the report is sent, you can set it so the actor only gets their own line notes.
