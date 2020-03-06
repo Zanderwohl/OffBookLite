@@ -1,6 +1,7 @@
 import sqlite3
 import SQLiteTestEntries
 import SQLPrepare
+import os
 
 db = None   # The database object
 dbc = None  # The database cursor
@@ -64,12 +65,16 @@ def install_database():
     );
     ''')
     dbc.execute('''CREATE VIEW EventsWithInstitutions AS
-        SELECT Events.id, Events.name, Events.description, Events.startDate, Events.endDate,
+        SELECT Events.id as EventId, Events.name, Events.description, Events.startDate, Events.endDate,
         Events.productionId, Events.deleted, Productions.institutionId
         FROM Events JOIN Productions
         ON Productions.id == Events.productionId''')
     SQLiteTestEntries.create(dbc)
     db.commit()
+
+
+def __delete_database_file__():
+    os.remove('test.db')
 
 
 def __convert_query__(keys):
@@ -144,35 +149,49 @@ def create_institution(name):
     db.commit()
 
 
+def __append_condition__(arg, condition, args, conditions):
+    """Helper function for get_events.
+    arg is the value to be compared,
+    condition is the conditional statement the arg will be placed into,
+    (like 'columnName =?')
+    args is the list of args this argument should be added to,
+    and conditions is the list of condition strings."""
+    if arg is not None:
+        args.append(arg)
+        conditions.append(condition)
+
+
+def boolean_to_int(value):
+    """Prepares a true or false value, whether string or boolean, for sql, which requires an integer."""
+    if value == "true" or value == "True" or value is True:
+        return 1
+    if value == "false" or value == "False" or value is False:
+        return 0
+    if value is None:
+        return None
+
+
 def get_events(institution_id=None, production_id=None, event_id=None, deleted=None):
-    args = []
-    conditions = []
-    if institution_id is not None:
-        args.append(institution_id)
-        conditions.append('institutionId = ?')
-    if production_id is not None:
-        args.append(production_id)
-        conditions.append('productionId = ?')
-    if event_id is not None:
-        args.append(event_id)
-        conditions.append('id = ?')
-    if deleted == "true":
-        deleted = 1
-    if deleted == "false":
-        deleted = 0
-    if deleted is not None:
-        args.append(deleted)
-        conditions.append('deleted = ?')
+    """Performs a query on events, giving back all events with certain conditions.
+    Ignores the values of conditions not supplied."""
+    args, conditions = [], []
+    __append_condition__(institution_id, 'institutionId = ?', args, conditions)
+    __append_condition__(production_id, 'productionId = ?', args, conditions)
+    __append_condition__(event_id, 'eventId = ?', args, conditions)
+    __append_condition__(boolean_to_int(deleted), 'deleted = ?', args, conditions)
     query = 'SELECT * FROM EventsWithInstitutions ' + SQLPrepare.where_and(conditions) + ';'
-    # print(query, conditions, args)
     dbc.execute(query, tuple(args))
-    return __convert_query__(['id', 'name', 'description', 'startDate', 'endDate', 'productionId', 'deleted'])
+    return __convert_query__(['id', 'name', 'description', 'startDate', 'endDate', 'productionId', 'deleted',
+                              'institutionId'])
 
 
 init_database()
 db.commit()
 
 if __name__ == "__main__":
+    # __delete_database_file__()
+    init_database()
+    db.commit()
     print(get_events())
     print(get_events(institution_id=0))
     print(get_events(institution_id=1))
