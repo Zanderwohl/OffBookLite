@@ -3,36 +3,31 @@ import csv
 directory = 'test_csv'
 
 
-def institutions(dbc):
-    with open(directory + '/institutions.csv', newline='') as csv_file:
+def populate(table, dbc):
+    with open(directory + '/' + table + '.csv', newline='') as csv_file:
         reader = csv.reader(csv_file)
         next(reader, None)
         for row in reader:
-            dbc.execute('''INSERT INTO Institutions VALUES (?, ?, ?);''', tuple(row))
-
-
-def productions(dbc):
-    with open(directory + '/productions.csv', newline='') as csv_file:
-        reader = csv.reader(csv_file)
-        next(reader, None)
-        for row in reader:
-            dbc.execute('''INSERT INTO Productions VALUES (?, ?, ?, ?, ?, ?, ?);''', tuple(row))
-
-
-def productions(dbc):
-    with open(directory + '/persons.csv', newline='') as csv_file:
-        reader = csv.reader(csv_file)
-        next(reader, None)
-        for row in reader:
-            dbc.execute('''INSERT INTO Persons VALUES (?, ?, ?, ?, ?);''', tuple(row))
+            query = 'INSERT INTO ' + table + ' VALUES ('
+            for i in range(len(row)):
+                query += '?'
+                if not i + 1 == len(row):
+                    query += ', '
+            query += ');'
+            values = tuple(row)
+            # print(query, values)
+            dbc.execute(query, values)
 
 
 def create(dbc):
-
-    institutions(dbc)
-    productions(dbc)
-    pass
+    populate('Institutions', dbc)
+    populate('Productions', dbc)
+    populate('Persons', dbc)
+    populate('Events', dbc)
 
 
 if __name__ == "__main__":
-    institutions(None)
+    populate('Institutions', None)
+    populate('Productions', None)
+    populate('Persons', None)
+    populate('Events', None)
