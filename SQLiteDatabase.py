@@ -5,7 +5,13 @@ import os
 
 db = None   # The database object
 dbc = None  # The database cursor
-db_file = 'test.db'
+db_directory = 'data'
+db_file = 'test'
+db_extension = 'db'
+
+
+def db_path():
+    return db_directory + '/' + db_file + '.' + db_extension
 
 
 def init_database():
@@ -16,13 +22,15 @@ def init_database():
     # if the db file does not exist, we have to install.
     need_to_install = False
     try:
-        f = open(db_file)
+        f = open(db_path())
         f.close()
     except IOError:
         print('need to install')
+        if not os.path.exists(db_directory):
+            os.mkdir(db_directory)
         need_to_install = True
 
-    db = sqlite3.connect(db_file)
+    db = sqlite3.connect(db_path())
     dbc = db.cursor()
     if need_to_install:
         install_database()
@@ -74,7 +82,9 @@ def install_database():
 
 
 def __delete_database_file__():
-    os.remove('test.db')
+    db.commit()
+    db.close()
+    os.remove(db_path())
 
 
 def __convert_query__(keys):
