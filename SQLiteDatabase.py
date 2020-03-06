@@ -1,5 +1,6 @@
 import sqlite3
 import SQLiteTestEntries
+import SQLPrepare
 
 db = None   # The database object
 dbc = None  # The database cursor
@@ -62,11 +63,16 @@ def install_database():
         deleted         BOOLEAN DEFAULT (false)
     );
     ''')
+    dbc.execute('''CREATE VIEW EventsWithInstitutions AS
+        SELECT Events.id, Events.name, Events.description, Events.startDate, Events.endDate,
+        Events.productionId, Events.deleted, Productions.institutionId
+        FROM Events JOIN Productions
+        ON Productions.id == Events.productionId''')
     SQLiteTestEntries.create(dbc)
     db.commit()
 
 
-def convert_query(keys):
+def __convert_query__(keys):
     """Takes the results of a query (stored in this file's scope)
     and turns it into an array of dictionaries."""
     query = []
@@ -94,7 +100,7 @@ def get_persons(institution_id, production_id):
     args = (institution_id,)
     dbc.execute('''SELECT * FROM Persons
     WHERE institutionId=?''', args)
-    return convert_query(['id', 'fName', 'lName', 'institutionId'])
+    return __convert_query__(['id', 'fName', 'lName', 'institutionId'])
 
 
 def create_person(f_name, l_name, institution_id):
@@ -114,7 +120,7 @@ def get_productions(production_id=None):
         ''', args)
     else:
         dbc.execute('''SELECT * FROM Productions''')
-    return convert_query(['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
+    return __convert_query__(['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
 
 
 def create_production(name, description, institution_id, start_date, end_date):
@@ -128,7 +134,7 @@ def create_production(name, description, institution_id, start_date, end_date):
 def get_institutions():
     """Get list of institutions."""
     dbc.execute('''SELECT * FROM Institutions''')
-    return convert_query(['id', 'name'])
+    return __convert_query__(['id', 'name'])
 
 
 def create_institution(name):
@@ -138,17 +144,38 @@ def create_institution(name):
     db.commit()
 
 
-def get_events(institution_id=None, production_id=None, event_id=None):
-    if institution_id is None:
-        institution_id = "ANY"
-    if production_id is None:
-        production_id = "ANY"
-    if event_id is None:
-        event_id = "ANY"
-    args = (institution_id, production_id, event_id)
-    dbc.execute('''''', args)
-    return convert_query([])
+def get_events(institution_id=None, production_id=None, event_id=None, deleted=None):
+    args = []
+    conditions = []
+    if institution_id is not None:
+        args.append(institution_id)
+        conditions.append('institutionId = ?')
+    if production_id is not None:
+        args.append(production_id)
+        conditions.append('productionId = ?')
+    if event_id is not None:
+        args.append(event_id)
+        conditions.append('id = ?')
+    if deleted == "true":
+        deleted = 1
+    if deleted == "false":
+        deleted = 0
+    if deleted is not None:
+        args.append(deleted)
+        conditions.append('deleted = ?')
+    query = 'SELECT * FROM EventsWithInstitutions ' + SQLPrepare.where_and(conditions) + ';'
+    # print(query, conditions, args)
+    dbc.execute(query, tuple(args))
+    return __convert_query__(['id', 'name', 'description', 'startDate', 'endDate', 'productionId', 'deleted'])
 
 
 init_database()
 db.commit()
+
+if __name__ == "__main__":
+    print(get_events())
+    print(get_events(institution_id=0))
+    print(get_events(institution_id=1))
+    print(get_events(production_id=1))
+    print(get_events(deleted="true"))
+    print(get_events(event_id=3))
