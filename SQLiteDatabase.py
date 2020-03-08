@@ -76,11 +76,35 @@ def install_database():
         lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP
     );
     ''')
+    dbc.execute('''CREATE TABLE Roles(
+        id              INTEGER PRIMARY KEY,
+        institutionId   INTEGER REFERENCES Institutions(id),
+        name            TEXT,
+        shortName       TEXT
+    );
+    ''')  # given an institutionId of 0, this role should be copied to each new institution.
+    dbc.execute('''CREATE TABLE PersonProductionRoles(
+        person          INTEGER REFERENCES Persons(id),
+        production      INTEGER REFERENCES Productions(id),
+        role            INTEGER REFERENCES Roles(id),
+        lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+    ''')
     dbc.execute('''CREATE VIEW EventsWithInstitutions AS
         SELECT Events.id as EventId, Events.name, Events.description, Events.startDate, Events.endDate,
         Events.productionId, Events.deleted, Productions.institutionId
         FROM Events JOIN Productions
-        ON Productions.id == Events.productionId''')
+        ON Productions.id == Events.productionId;''')
+    dbc.execute('''
+    CREATE VIEW PersonProductionRoleView AS
+    SELECT personId, institutionId, productionId, Roles.id roleId, fName, lName, name roleName, shortName shortRoleName,
+    lastUpdated
+    FROM Roles JOIN (SELECT id personId, fName, lName, institutionId, Production productionId, role,
+        max(Persons.lastUpdated, PersonProductionRoles.lastUpdated) lastUpdated
+        FROM Persons JOIN PersonProductionRoles
+        ON Persons.id = PersonProductionRoles.Person
+        WHERE deleted = 0)
+    ON role = Roles.id;''')
     SQLiteTestEntries.create(dbc)
     db.commit()
 
@@ -109,16 +133,17 @@ def __convert_query__(keys):
     return query
 
 
-def get_persons(institution_id, production_id):
+def get_persons(institution_id=None, production_id=None):
     """Gets list of all persons in an institution."""
+    args, conditions = [], []
+    __append_condition__(institution_id, 'institutionId = ?', args, conditions)
+    # __append_condition__(production_id, 'productionId = ?', args, conditions)
     if production_id is not None:
         print('Filtering persons by production id is not implemented yet.')
         # TODO: Write another query that filters by participation in productions.
     else:
         pass  # TODO: Push the normal query under here.
-    args = (institution_id,)
-    dbc.execute('''SELECT * FROM Persons
-    WHERE institutionId=?''', args)
+    dbc.execute('''SELECT * FROM Persons ''' + SQLPrepare.where_and(conditions) + ';', args)
     return __convert_query__(['id', 'fName', 'lName', 'institutionId'])
 
 
@@ -244,3 +269,6 @@ if __name__ == "__main__":
     print(get_events(production_id=1))
     print(get_events(deleted="true"))
     print(get_events(event_id=3))
+    print(get_persons())
+    print(get_persons(institution_id=3))
+    print(get_persons(institution_id=4))

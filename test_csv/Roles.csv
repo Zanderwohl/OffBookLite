@@ -1,0 +1,41 @@
+id,institutionId,name,shortName
+0,0,No Role,None
+1,0,Stage Manager,SM
+2,0,Assistant Stage Manager,ASM
+3,0,Director,Dir
+4,0,Actor,Ac
+5,0,Choreographer,Chor
+6,0,Costume Designer,Cost
+7,0,Lighting Designer,Lights
+8,0,Sound Designer,Sound
+9,0,Followspot Operator,SpotOp
+10,0,Lightboard Operator,LightOp
+11,0,Soundboard Operator,SoundOp
+12,1,Stage Manager,SM
+13,1,Assistant Stage Manager,ASM
+14,1,Director,Dir
+15,1,Actor,Ac
+16,1,Choreographer,Chor
+17,1,Costume Designer,Cost
+18,1,Lighting Designer,Lights
+19,1,Sound Designer,Sound
+20,1,Followspot Operator,SpotOp
+21,1,Lightboard Operator,LightOp
+22,1,Soundboard Operator,SoundOp
+23,2,Stage Manager,SM
+24,2,Assistant Stage Manager,ASM
+25,2,Director,Dir
+26,2,Actor,Ac
+27,2,Choreographer,Chor
+28,3,Actor,Ac
+29,4,Stage Manager,SM
+30,4,Assistant Stage Manager,ASM
+31,4,Director,Dir
+32,4,Actor,Ac
+33,4,Choreographer,Chor
+34,4,Costume Designer,Cost
+35,4,Lighting Designer,Lights
+36,4,Sound Designer,Sound
+37,4,Followspot Operator,SpotOp
+38,4,Lightboard Operator,LightOp
+39,4,Soundboard Operator,SoundOp
