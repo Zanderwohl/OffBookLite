@@ -57,7 +57,7 @@ def install_database():
         lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP
     );''')
     dbc.execute('''CREATE TABLE Productions (
-        id              INTEGER  PRIMARY KEY,
+        id              INTEGER  PRIMARY KEY AUTOINCREMENT,
         name            TEXT,
         description     TEXT,
         institutionId   INTEGER  REFERENCES Institutions (id),
@@ -68,7 +68,7 @@ def install_database():
     );
     ''')
     dbc.execute('''CREATE TABLE Events(
-        id              INTEGER PRIMARY KEY,
+        id              INTEGER PRIMARY KEY AUTOINCREMENT,
         name            TEXT,
         description     TEXT,
         startDate       DATETIME,
@@ -79,7 +79,7 @@ def install_database():
     );
     ''')
     dbc.execute('''CREATE TABLE Roles(
-        id              INTEGER PRIMARY KEY,
+        id              INTEGER PRIMARY KEY AUTOINCREMENT,
         institutionId   INTEGER REFERENCES Institutions(id),
         name            TEXT,
         shortName       TEXT
@@ -155,6 +155,7 @@ def change_person(person_id, new_f_name=None, new_l_name=None):
     if len(updates) > 0:
         query = 'UPDATE Persons SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
         dbc.execute(query, tuple(args))
+        dbc.commit()
 
 
 def get_productions(production_id=None):
@@ -195,6 +196,7 @@ def change_production(production_id, new_name=None, new_description=None, new_st
     if len(updates) > 0:
         query = 'UPDATE Productions SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
         dbc.execute(query, tuple(args))
+        dbc.commit()
 
 
 def get_institutions():
@@ -213,6 +215,7 @@ def create_institution(name):
     """Create an institution in the database."""
     args = (name,)
     dbc.execute('''INSERT INTO Institutions (name) VALUES (?)''', args)
+    # TODO: copy roles from institution 0 to new institution
     db.commit()
 
 
@@ -225,6 +228,7 @@ def change_institution(institution_id, new_name=None):
     if len(updates) > 0:
         query = 'UPDATE Institutions SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
         dbc.execute(query, tuple(args))
+        dbc.commit()
 
 
 def get_events(institution_id=None, production_id=None, event_id=None, deleted=None):
@@ -238,7 +242,7 @@ def get_events(institution_id=None, production_id=None, event_id=None, deleted=N
     query = 'SELECT * FROM EventsWithInstitutions ' + SQLPrepare.where_and(conditions) + ';'
     dbc.execute(query, tuple(args))
     return convert_query(['id', 'name', 'description', 'startDate', 'endDate', 'productionId', 'deleted',
-                              'institutionId'])
+                          'institutionId'])
 
 
 def get_events_updates():
@@ -267,6 +271,34 @@ def change_event(event_id, new_name=None, new_description=None, new_start_date=N
     if len(updates) > 0:
         query = 'UPDATE Events SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
         dbc.execute(query, tuple(args))
+        dbc.commit()
+
+
+def get_roles(institution_id):
+    args = (institution_id,)
+    query = 'SELECT (id, name, shortName) FROM Roles WHERE institutionId = ?'
+    dbc.execute(query, args)
+    return convert_query(['id', 'name', 'shortName'])
+
+
+def create_role(institution_id, name, short_name=None):
+    if short_name is None:
+        short_name = name
+    args = institution_id, name, short_name
+    query = 'INSERT INTO Roles (institutionId, name, shortName) VALUES (?, ?, ?);'
+    dbc.execute(query, args)
+    db.commit()
+
+
+def change_role(role_id, new_name=None, new_short_name=None):
+    updates, args = [], []
+    append_update(new_name, 'name', updates, args)
+    append_update(new_short_name, 'shortName', updates, args)
+    args.append(role_id)
+    if len(updates) > 0:
+        query = 'UPDATE Roles SET ' + SQLPrepare.comma_seperate(updates) + ' where id = ?'
+        dbc.execute(query, args)
+        dbc.commit()
 
 
 init_database()
