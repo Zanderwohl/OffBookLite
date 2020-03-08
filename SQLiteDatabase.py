@@ -3,6 +3,8 @@ import SQLiteTestEntries
 import SQLPrepare
 import os
 
+from SQLPrepare import convert_query, append_update, append_timestamp, append_condition, boolean_to_int
+
 db = None  # The database object
 dbc = None  # The database cursor
 db_directory = 'data'
@@ -115,38 +117,10 @@ def __delete_database_file__():
     os.remove(db_path())
 
 
-def __convert_query__(keys):
-    """Takes the results of a query (stored in this file's scope)
-    and turns it into an array of dictionaries."""
-    query = []
-    while True:
-        next_row = dbc.fetchone()
-        # print(next_row)
-        # print(keys)
-        if next_row is None:
-            break
-        next_row_dictionary = {}
-        for entry, key in zip(next_row, keys):
-            next_row_dictionary.update({key: entry})
-        query.append(next_row_dictionary)
-    #    print(query)
-    return query
-
-
-def __append_update__(new_value, column_name, updates, args):
-    if new_value is not None:
-        updates.append(column_name + ' = ?')
-        args.append(new_value)
-
-
-def __append_timestamp__(updates):
-    updates.append('lastUpdated = CURRENT_TIMESTAMP')
-
-
 def get_persons(institution_id=None, production_id=None):
     """Gets list of all persons in an institution."""
     args, conditions = [], []
-    __append_condition__(institution_id, 'institutionId = ?', args, conditions)
+    append_condition(institution_id, 'institutionId = ?', args, conditions)
     # __append_condition__(production_id, 'productionId = ?', args, conditions)
     if production_id is not None:
         print('Filtering persons by production id is not implemented yet.')
@@ -154,13 +128,13 @@ def get_persons(institution_id=None, production_id=None):
     else:
         pass  # TODO: Push the normal query under here.
     dbc.execute('''SELECT * FROM Persons ''' + SQLPrepare.where_and(conditions) + ';', args)
-    return __convert_query__(['id', 'fName', 'lName', 'institutionId'])
+    return convert_query(['id', 'fName', 'lName', 'institutionId'])
 
 
 def get_persons_updates():
     """Gets id-lastUpdated pairs for the persons table."""
     dbc.execute('SELECT (id, lastUpdated) FROM Persons')
-    return __convert_query__(['id', 'lastUpdated'])
+    return convert_query(['id', 'lastUpdated'])
 
 
 def create_person(f_name, l_name, institution_id):
@@ -174,9 +148,9 @@ def create_person(f_name, l_name, institution_id):
 def change_person(person_id, new_f_name=None, new_l_name=None):
     """Update the SQL record for a person"""
     updates, args = [], []
-    __append_update__(new_f_name, 'fName', updates, args)
-    __append_update__(new_l_name, 'lName', updates, args)
-    __append_timestamp__(updates)
+    append_update(new_f_name, 'fName', updates, args)
+    append_update(new_l_name, 'lName', updates, args)
+    append_timestamp(updates)
     args.append(person_id)
     if len(updates) > 0:
         query = 'UPDATE Persons SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
@@ -192,13 +166,13 @@ def get_productions(production_id=None):
         ''', args)
     else:
         dbc.execute('''SELECT * FROM Productions''')
-    return __convert_query__(['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
+    return convert_query(['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
 
 
 def get_productions_updates():
     """Gets id-lastUpdated pairs for the productions table."""
     dbc.execute('SELECT (id, lastUpdated) FROM Productions')
-    return __convert_query__(['id', 'lastUpdated'])
+    return convert_query(['id', 'lastUpdated'])
 
 
 def create_production(name, description, institution_id, start_date, end_date):
@@ -212,11 +186,11 @@ def create_production(name, description, institution_id, start_date, end_date):
 def change_production(production_id, new_name=None, new_description=None, new_start_date=None, new_end_date=None):
     """Update the SQL record for a production"""
     updates, args = [], []
-    __append_update__(new_name, 'name', updates, args)
-    __append_update__(new_description, 'description', updates, args)
-    __append_update__(new_start_date, 'startDate', updates, args)
-    __append_update__(new_end_date, 'endDate', updates, args)
-    __append_timestamp__(updates)
+    append_update(new_name, 'name', updates, args)
+    append_update(new_description, 'description', updates, args)
+    append_update(new_start_date, 'startDate', updates, args)
+    append_update(new_end_date, 'endDate', updates, args)
+    append_timestamp(updates)
     args.append(production_id)
     if len(updates) > 0:
         query = 'UPDATE Productions SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
@@ -226,13 +200,13 @@ def change_production(production_id, new_name=None, new_description=None, new_st
 def get_institutions():
     """Get list of institutions."""
     dbc.execute('''SELECT * FROM Institutions''')
-    return __convert_query__(['id', 'name'])
+    return convert_query(['id', 'name'])
 
 
 def get_institutions_updates():
     """Gets id-lastUpdated pairs for the persons table."""
     dbc.execute('SELECT (id, lastUpdated) FROM Institutions')
-    return __convert_query__(['id', 'lastUpdated'])
+    return convert_query(['id', 'lastUpdated'])
 
 
 def create_institution(name):
@@ -245,54 +219,32 @@ def create_institution(name):
 def change_institution(institution_id, new_name=None):
     """Update the SQL record for an institution"""
     updates, args = [], []
-    __append_update__(new_name, 'name', updates, args)
-    __append_timestamp__(updates)
+    append_update(new_name, 'name', updates, args)
+    append_timestamp(updates)
     args.append(institution_id)
     if len(updates) > 0:
         query = 'UPDATE Institutions SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
         dbc.execute(query, tuple(args))
 
 
-def __append_condition__(arg, condition, args, conditions):
-    """Helper function for get_events.
-    arg is the value to be compared,
-    condition is the conditional statement the arg will be placed into,
-    (like 'columnName =?')
-    args is the list of args this argument should be added to,
-    and conditions is the list of condition strings."""
-    if arg is not None:
-        args.append(arg)
-        conditions.append(condition)
-
-
-def boolean_to_int(value):
-    """Prepares a true or false value, whether string or boolean, for sql, which requires an integer."""
-    if value == "true" or value == "True" or value is True:
-        return 1
-    if value == "false" or value == "False" or value is False:
-        return 0
-    if value is None:
-        return None
-
-
 def get_events(institution_id=None, production_id=None, event_id=None, deleted=None):
     """Performs a query on events, giving back all events with certain conditions.
     Ignores the values of conditions not supplied."""
     args, conditions = [], []
-    __append_condition__(institution_id, 'institutionId = ?', args, conditions)
-    __append_condition__(production_id, 'productionId = ?', args, conditions)
-    __append_condition__(event_id, 'eventId = ?', args, conditions)
-    __append_condition__(boolean_to_int(deleted), 'deleted = ?', args, conditions)
+    append_condition(institution_id, 'institutionId = ?', args, conditions)
+    append_condition(production_id, 'productionId = ?', args, conditions)
+    append_condition(event_id, 'eventId = ?', args, conditions)
+    append_condition(boolean_to_int(deleted), 'deleted = ?', args, conditions)
     query = 'SELECT * FROM EventsWithInstitutions ' + SQLPrepare.where_and(conditions) + ';'
     dbc.execute(query, tuple(args))
-    return __convert_query__(['id', 'name', 'description', 'startDate', 'endDate', 'productionId', 'deleted',
+    return convert_query(['id', 'name', 'description', 'startDate', 'endDate', 'productionId', 'deleted',
                               'institutionId'])
 
 
 def get_events_updates():
     """Gets id-lastUpdated pairs for the events table."""
     dbc.execute('SELECT (id, lastUpdated) FROM Events')
-    return __convert_query__(['id', 'lastUpdated'])
+    return convert_query(['id', 'lastUpdated'])
 
 
 def create_event(name, description, start_date, end_date, production_id):
@@ -306,11 +258,11 @@ def create_event(name, description, start_date, end_date, production_id):
 def change_event(event_id, new_name=None, new_description=None, new_start_date=None, new_end_date=None):
     """Update the SQL record for an event"""
     updates, args = [], []
-    __append_update__(new_name, 'name', updates, args)
-    __append_update__(new_description, 'description', updates, args)
-    __append_update__(new_start_date, 'startDate', updates, args)
-    __append_update__(new_end_date, 'endDate', updates, args)
-    __append_timestamp__(updates)
+    append_update(new_name, 'name', updates, args)
+    append_update(new_description, 'description', updates, args)
+    append_update(new_start_date, 'startDate', updates, args)
+    append_update(new_end_date, 'endDate', updates, args)
+    append_timestamp(updates)
     args.append(event_id)
     if len(updates) > 0:
         query = 'UPDATE Events SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'

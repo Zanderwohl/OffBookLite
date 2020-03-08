@@ -1,3 +1,6 @@
+from SQLiteDatabase import dbc
+
+
 def where_and(conditions):
     if not isinstance(conditions, list):
         raise Exception('Argument given to SQLPrepare.where_and is not a list.')
@@ -11,6 +14,7 @@ def where_and(conditions):
             where_clause += '\n'
     return where_clause
 
+
 def comma_seperate(items):
     if not isinstance(items, list):
         raise Exception('Argument given to SQLPrepare.comma_seperate is not a list.')
@@ -23,6 +27,7 @@ def comma_seperate(items):
             expanded_list += ', '
     return expanded_list
 
+
 if __name__ == "__main__":
     print(where_and(["row = ?"]))
     print(where_and(["row = ?", "anotherRow = ?"]))
@@ -31,3 +36,53 @@ if __name__ == "__main__":
     print(comma_seperate(['n = ?']))
     # print(comma_seperate('n = 4'))
     print(comma_seperate(['n = ?', 'l = ?', 'f = ?']))
+
+
+def convert_query(keys):
+    """Takes the results of a query (stored in this file's scope)
+    and turns it into an array of dictionaries."""
+    query = []
+    while True:
+        next_row = dbc.fetchone()
+        # print(next_row)
+        # print(keys)
+        if next_row is None:
+            break
+        next_row_dictionary = {}
+        for entry, key in zip(next_row, keys):
+            next_row_dictionary.update({key: entry})
+        query.append(next_row_dictionary)
+    #    print(query)
+    return query
+
+
+def append_update(new_value, column_name, updates, args):
+    if new_value is not None:
+        updates.append(column_name + ' = ?')
+        args.append(new_value)
+
+
+def append_timestamp(updates):
+    updates.append('lastUpdated = CURRENT_TIMESTAMP')
+
+
+def append_condition(arg, condition, args, conditions):
+    """Helper function for get_events.
+    arg is the value to be compared,
+    condition is the conditional statement the arg will be placed into,
+    (like 'columnName =?')
+    args is the list of args this argument should be added to,
+    and conditions is the list of condition strings."""
+    if arg is not None:
+        args.append(arg)
+        conditions.append(condition)
+
+
+def boolean_to_int(value):
+    """Prepares a true or false value, whether string or boolean, for sql, which requires an integer."""
+    if value == "true" or value == "True" or value is True:
+        return 1
+    if value == "false" or value == "False" or value is False:
+        return 0
+    if value is None:
+        return None
