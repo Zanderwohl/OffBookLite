@@ -122,6 +122,12 @@ def get_persons(institution_id, production_id):
     return __convert_query__(['id', 'fName', 'lName', 'institutionId'])
 
 
+def get_persons_updates():
+    """Gets id-lastUpdated pairs for the persons table."""
+    dbc.execute('SELECT (id, lastUpdated) FROM Persons')
+    return __convert_query__(['id', 'lastUpdated'])
+
+
 def create_person(f_name, l_name, institution_id):
     """Add a new person into the database."""
     args = (f_name, l_name, institution_id)
@@ -142,6 +148,12 @@ def get_productions(production_id=None):
     return __convert_query__(['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
 
 
+def get_productions_updates():
+    """Gets id-lastUpdated pairs for the productions table."""
+    dbc.execute('SELECT (id, lastUpdated) FROM Productions')
+    return __convert_query__(['id', 'lastUpdated'])
+
+
 def create_production(name, description, institution_id, start_date, end_date):
     """Creates a new production in the database."""
     args = (name, description, institution_id, start_date, end_date)
@@ -154,6 +166,12 @@ def get_institutions():
     """Get list of institutions."""
     dbc.execute('''SELECT * FROM Institutions''')
     return __convert_query__(['id', 'name'])
+
+
+def get_institutions_updates():
+    """Gets id-lastUpdated pairs for the persons table."""
+    dbc.execute('SELECT (id, lastUpdated) FROM Institutions')
+    return __convert_query__(['id', 'lastUpdated'])
 
 
 def create_institution(name):
