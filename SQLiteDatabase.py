@@ -217,6 +217,20 @@ def get_events(institution_id=None, production_id=None, event_id=None, deleted=N
                               'institutionId'])
 
 
+def get_events_updates():
+    """Gets id-lastUpdated pairs for the events table."""
+    dbc.execute('SELECT (id, lastUpdated) FROM Events')
+    return __convert_query__(['id', 'lastUpdated'])
+
+
+def create_event(name, description, start_date, end_date, production_id):
+    """Create an institution in the database."""
+    args = (name, description, start_date, end_date, production_id)
+    dbc.execute('''INSERT INTO Institutions (name, description, startDate, endDate, productionId)
+    VALUES (?, ?, ?, ?, ?);''', args)
+    db.commit()
+
+
 init_database()
 db.commit()
 
