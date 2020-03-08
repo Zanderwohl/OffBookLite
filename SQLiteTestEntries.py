@@ -6,16 +6,21 @@ directory = 'test_csv'
 def populate(table, dbc):
     with open(directory + '/' + table + '.csv', newline='') as csv_file:
         reader = csv.reader(csv_file)
-        next(reader, None)
+        columns = next(reader, None)
         for row in reader:
-            query = 'INSERT INTO ' + table + ' VALUES ('
+            query = 'INSERT INTO ' + table + ' ('
+            for i, column in enumerate(columns):
+                query += column
+                if not i + 1 == len(row):
+                    query += ', '
+            query += ') VALUES ('
             for i in range(len(row)):
                 query += '?'
                 if not i + 1 == len(row):
                     query += ', '
             query += ');'
             values = tuple(row)
-            # print(query, values)
+            print(query, values)
             dbc.execute(query, values)
 
 

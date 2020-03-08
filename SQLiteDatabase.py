@@ -3,7 +3,7 @@ import SQLiteTestEntries
 import SQLPrepare
 import os
 
-db = None   # The database object
+db = None  # The database object
 dbc = None  # The database cursor
 db_directory = 'data'
 db_file = 'test'
@@ -40,9 +40,10 @@ def install_database():
     """Creates the tables in the database."""
     dbc.execute('''
     CREATE TABLE Institutions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        deleted BOOLEAN DEFAULT (false)
+        id              INTEGER PRIMARY KEY AUTOINCREMENT,
+        name            TEXT NOT NULL,
+        deleted         BOOLEAN DEFAULT (false),
+        lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP
     );''')
     dbc.execute('''
     CREATE TABLE Persons(
@@ -50,16 +51,18 @@ def install_database():
         fName TEXT DEFAULT '',
         lName TEXT DEFAULT '',
         institutionId INTEGER REFERENCES Institutions(id),
-        deleted         BOOLEAN DEFAULT (false)
+        deleted         BOOLEAN DEFAULT (false),
+        lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP
     );''')
     dbc.execute('''CREATE TABLE Productions (
-        id            INTEGER  PRIMARY KEY,
-        name          TEXT,
-        description   TEXT,
-        institutionId INTEGER  REFERENCES Institutions (id),
-        startDate     DATETIME,
-        endDate       DATETIME,
-        deleted         BOOLEAN DEFAULT (false) 
+        id              INTEGER  PRIMARY KEY,
+        name            TEXT,
+        description     TEXT,
+        institutionId   INTEGER  REFERENCES Institutions (id),
+        startDate       DATETIME,
+        endDate         DATETIME,
+        deleted         BOOLEAN DEFAULT (false),
+        lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP
     );
     ''')
     dbc.execute('''CREATE TABLE Events(
@@ -69,7 +72,8 @@ def install_database():
         startDate       DATETIME,
         endDate         DATETIME,
         productionId    INTEGER REFERENCES Productions(id),
-        deleted         BOOLEAN DEFAULT (false)
+        deleted         BOOLEAN DEFAULT (false),
+        lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP
     );
     ''')
     dbc.execute('''CREATE VIEW EventsWithInstitutions AS
@@ -101,7 +105,7 @@ def __convert_query__(keys):
         for entry, key in zip(next_row, keys):
             next_row_dictionary.update({key: entry})
         query.append(next_row_dictionary)
-#    print(query)
+    #    print(query)
     return query
 
 
@@ -111,7 +115,7 @@ def get_persons(institution_id, production_id):
         print('Filtering persons by production id is not implemented yet.')
         # TODO: Write another query that filters by participation in productions.
     else:
-        pass    # TODO: Push the normal query under here.
+        pass  # TODO: Push the normal query under here.
     args = (institution_id,)
     dbc.execute('''SELECT * FROM Persons
     WHERE institutionId=?''', args)
