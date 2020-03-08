@@ -133,6 +133,16 @@ def __convert_query__(keys):
     return query
 
 
+def __append_update__(new_value, column_name, updates, args):
+    if new_value is not None:
+        updates.append(column_name + ' = ?')
+        args.append(new_value)
+
+
+def __append_timestamp__(updates):
+    updates.append('lastUpdated = CURRENT_TIMESTAMP')
+
+
 def get_persons(institution_id=None, production_id=None):
     """Gets list of all persons in an institution."""
     args, conditions = [], []
@@ -161,6 +171,18 @@ def create_person(f_name, l_name, institution_id):
     db.commit()
 
 
+def change_person(person_id, new_f_name=None, new_l_name=None):
+    """Update the SQL record for a person"""
+    updates, args = [], []
+    __append_update__(new_f_name, 'fName', updates, args)
+    __append_update__(new_l_name, 'lName', updates, args)
+    __append_timestamp__(updates)
+    args.append(person_id)
+    if len(updates) > 0:
+        query = 'UPDATE Persons SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
+        dbc.execute(query, tuple(args))
+
+
 def get_productions(production_id=None):
     """Gets a list of productions from a particular institution."""
     if production_id is not None:
@@ -187,6 +209,20 @@ def create_production(name, description, institution_id, start_date, end_date):
     db.commit()
 
 
+def change_production(production_id, new_name=None, new_description=None, new_start_date=None, new_end_date=None):
+    """Update the SQL record for a production"""
+    updates, args = [], []
+    __append_update__(new_name, 'name', updates, args)
+    __append_update__(new_description, 'description', updates, args)
+    __append_update__(new_start_date, 'startDate', updates, args)
+    __append_update__(new_end_date, 'endDate', updates, args)
+    __append_timestamp__(updates)
+    args.append(production_id)
+    if len(updates) > 0:
+        query = 'UPDATE Productions SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
+        dbc.execute(query, tuple(args))
+
+
 def get_institutions():
     """Get list of institutions."""
     dbc.execute('''SELECT * FROM Institutions''')
@@ -204,6 +240,17 @@ def create_institution(name):
     args = (name,)
     dbc.execute('''INSERT INTO Institutions (name) VALUES (?)''', args)
     db.commit()
+
+
+def change_institution(institution_id, new_name=None):
+    """Update the SQL record for an institution"""
+    updates, args = [], []
+    __append_update__(new_name, 'name', updates, args)
+    __append_timestamp__(updates)
+    args.append(institution_id)
+    if len(updates) > 0:
+        query = 'UPDATE Institutions SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
+        dbc.execute(query, tuple(args))
 
 
 def __append_condition__(arg, condition, args, conditions):
@@ -254,6 +301,20 @@ def create_event(name, description, start_date, end_date, production_id):
     dbc.execute('''INSERT INTO Institutions (name, description, startDate, endDate, productionId)
     VALUES (?, ?, ?, ?, ?);''', args)
     db.commit()
+
+
+def change_event(event_id, new_name=None, new_description=None, new_start_date=None, new_end_date=None):
+    """Update the SQL record for an event"""
+    updates, args = [], []
+    __append_update__(new_name, 'name', updates, args)
+    __append_update__(new_description, 'description', updates, args)
+    __append_update__(new_start_date, 'startDate', updates, args)
+    __append_update__(new_end_date, 'endDate', updates, args)
+    __append_timestamp__(updates)
+    args.append(event_id)
+    if len(updates) > 0:
+        query = 'UPDATE Events SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
+        dbc.execute(query, tuple(args))
 
 
 init_database()
