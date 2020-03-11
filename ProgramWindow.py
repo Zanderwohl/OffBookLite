@@ -94,12 +94,10 @@ class Window(Frame):
 
     def add_persons_frame(self):
         persons_frame = Frame(self, bg='#555555')
-        # button = Button(persons_frame, text="You're in Persons")
-        # button.pack()
         self.frames['Persons List'] = None
         self.frames.update({'Persons': persons_frame})
 
-    def update_persons_frame(self, persons):
+    def update_persons_frame(self):
         if self.frames['Persons List'] is not None:
             print("Replacing it!")
             self.frames['Persons List'].pack_forget()
@@ -113,13 +111,8 @@ class Window(Frame):
         for i in range(len(persons)):
             frame = self.add_person_frame(persons[i], self.frames['Persons List'], i)
             frame.pack(fill=X, expand=True)
-            # label = persons[i]['fName'] + " " + persons[i]['lName']
-            # new_button = Button(self.frames['Persons'], text=label)
-            # new_button.grid(column=0, row=i)
 
     def add_person_frame(self, person, parent, index):
-        # label = person['fName'] + " " + person['lName']
-        # new_button = Button(parent, text=label)
         if index % 2 == 0:
             color = '#3F3F3F'
         else:
@@ -142,7 +135,6 @@ class Window(Frame):
                                command=lambda: self.generate_person_frame_large(
                                    person, parent, index, meta_frame, frame, color))
         expand_button.grid(column=3, row=0)
-        # new_button.grid(column=0, row=index)
         frame.pack(fill=X, expand=True)
         return frame
 
@@ -162,10 +154,9 @@ class Window(Frame):
         name_label = Label(frame, text=name_text, padx=10, pady=60, bg=color, fg="#DEDEDE")
         name_label.grid(column=1, row=0)
         expand_button = Button(frame, text="Less", padx=10,
-                               command=lambda: self.generate_person_frame_small(
-                                   person, parent, index, meta_frame, frame, color))
+                               command=lambda:
+                               self.generate_person_frame_small(person, parent, index, meta_frame, frame, color))
         expand_button.grid(column=3, row=0)
-        # new_button.grid(column=0, row=index)
         frame.pack(fill=X, expand=True)
 
     def add_institutions_frame(self):
@@ -176,8 +167,6 @@ class Window(Frame):
 
     def add_productions_frame(self):
         productions_frame = Frame(self, bg='#555555')
-        # button = Button(productions_frame, text='You\'re in Productions')
-        # button.pack()
         self.frames['Productions List'] = None
         self.frames.update({'Productions': productions_frame})
 
@@ -195,13 +184,8 @@ class Window(Frame):
         for i in range(len(productions)):
             frame = self.add_production_frame(productions[i], self.frames['Productions List'], i)
             frame.pack(fill=X, expand=True)
-            # label = persons[i]['fName'] + " " + persons[i]['lName']
-            # new_button = Button(self.frames['Persons'], text=label)
-            # new_button.grid(column=0, row=i)
 
     def add_production_frame(self, person, parent, index):
-        # label = person['fName'] + " " + person['lName']
-        # new_button = Button(parent, text=label)
         if index % 2 == 0:
             color = '#3F3F3F'
         else:
@@ -224,7 +208,6 @@ class Window(Frame):
                                command=lambda: self.generate_production_frame_large(
                                    production, parent, index, meta_frame, frame, color))
         expand_button.grid(column=3, row=0)
-        # new_button.grid(column=0, row=index)
         frame.pack(fill=X, expand=True)
         return frame
 
@@ -247,7 +230,6 @@ class Window(Frame):
                                command=lambda: self.generate_production_frame_small(
                                    production, parent, index, meta_frame, frame, color))
         expand_button.grid(column=3, row=0)
-        # new_button.grid(column=0, row=index)
         frame.pack(fill=X, expand=True)
 
     def add_events_frame(self):
