@@ -8,18 +8,21 @@ from SQLPrepare import convert_query, append_update, append_timestamp, append_co
 db = None  # The database object
 dbc = None  # The database cursor
 db_directory = 'data'
-db_file = 'test'
-db_extension = 'db'
+db_file = None
+db_extension = None
 
 
 def db_path():
     return db_directory + '/' + db_file + '.' + db_extension
 
 
-def init_database():
+def init_database(file='data', extension='db'):
     """Opens the database, places in it and the cursor in memory,
     and create the db file if it doesn't exist."""
-    global db, dbc
+    global db, dbc, db_file, db_extension
+    db_file = file
+    db_extension = extension
+    print(db_path())
 
     # if the db file does not exist, we have to install.
     need_to_install = False
@@ -128,13 +131,13 @@ def get_persons(institution_id=None, production_id=None):
     else:
         pass  # TODO: Push the normal query under here.
     dbc.execute('''SELECT * FROM Persons ''' + SQLPrepare.where_and(conditions) + ';', args)
-    return convert_query(['id', 'fName', 'lName', 'institutionId'])
+    return convert_query(dbc, ['id', 'fName', 'lName', 'institutionId'])
 
 
 def get_persons_updates():
     """Gets id-lastUpdated pairs for the persons table."""
     dbc.execute('SELECT (id, lastUpdated) FROM Persons')
-    return convert_query(['id', 'lastUpdated'])
+    return convert_query(dbc, ['id', 'lastUpdated'])
 
 
 def create_person(f_name, l_name, institution_id):
@@ -167,13 +170,13 @@ def get_productions(production_id=None):
         ''', args)
     else:
         dbc.execute('''SELECT * FROM Productions''')
-    return convert_query(['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
+    return convert_query(dbc, ['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
 
 
 def get_productions_updates():
     """Gets id-lastUpdated pairs for the productions table."""
     dbc.execute('SELECT (id, lastUpdated) FROM Productions')
-    return convert_query(['id', 'lastUpdated'])
+    return convert_query(dbc, ['id', 'lastUpdated'])
 
 
 def create_production(name, description, institution_id, start_date, end_date):
@@ -202,13 +205,13 @@ def change_production(production_id, new_name=None, new_description=None, new_st
 def get_institutions():
     """Get list of institutions."""
     dbc.execute('''SELECT * FROM Institutions''')
-    return convert_query(['id', 'name'])
+    return convert_query(dbc, ['id', 'name'])
 
 
 def get_institutions_updates():
     """Gets id-lastUpdated pairs for the persons table."""
     dbc.execute('SELECT (id, lastUpdated) FROM Institutions')
-    return convert_query(['id', 'lastUpdated'])
+    return convert_query(dbc, ['id', 'lastUpdated'])
 
 
 def create_institution(name):
@@ -241,14 +244,14 @@ def get_events(institution_id=None, production_id=None, event_id=None, deleted=N
     append_condition(boolean_to_int(deleted), 'deleted = ?', args, conditions)
     query = 'SELECT * FROM EventsWithInstitutions ' + SQLPrepare.where_and(conditions) + ';'
     dbc.execute(query, tuple(args))
-    return convert_query(['id', 'name', 'description', 'startDate', 'endDate', 'productionId', 'deleted',
+    return convert_query(dbc, ['id', 'name', 'description', 'startDate', 'endDate', 'productionId', 'deleted',
                           'institutionId'])
 
 
 def get_events_updates():
     """Gets id-lastUpdated pairs for the events table."""
     dbc.execute('SELECT (id, lastUpdated) FROM Events')
-    return convert_query(['id', 'lastUpdated'])
+    return convert_query(dbc, ['id', 'lastUpdated'])
 
 
 def create_event(name, description, start_date, end_date, production_id):
@@ -278,7 +281,7 @@ def get_roles(institution_id):
     args = (institution_id,)
     query = 'SELECT (id, name, shortName) FROM Roles WHERE institutionId = ?'
     dbc.execute(query, args)
-    return convert_query(['id', 'name', 'shortName'])
+    return convert_query(dbc, ['id', 'name', 'shortName'])
 
 
 def create_role(institution_id, name, short_name=None):
@@ -301,8 +304,8 @@ def change_role(role_id, new_name=None, new_short_name=None):
         dbc.commit()
 
 
-init_database()
-db.commit()
+# init_database()
+# db.commit()
 
 if __name__ == "__main__":
     # __delete_database_file__()

@@ -10,7 +10,7 @@ class Model:
         self.institutions = None
         self.institution = 3
         self.events = None
-        SQLiteDatabase.init_database()
+        SQLiteDatabase.init_database(file='test')
         print('Model initialized.')
 
     def query_persons(self):

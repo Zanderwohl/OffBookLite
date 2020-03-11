@@ -1,4 +1,3 @@
-from SQLiteDatabase import dbc
 
 
 def where_and(conditions):
@@ -38,7 +37,7 @@ if __name__ == "__main__":
     print(comma_seperate(['n = ?', 'l = ?', 'f = ?']))
 
 
-def convert_query(keys):
+def convert_query(dbc, keys):
     """Takes the results of a query (stored in this file's scope)
     and turns it into an array of dictionaries."""
     query = []
