@@ -68,11 +68,17 @@ class Model:
             self.query_events()
         return self.events
 
-    def name_find(self, beginning, production=None):
+    def name_find(self, beginning, production_id):
         """Find persons by a name."""
         if self.persons is None:
-            self.persons = SQLiteDatabase.get_persons(self.institution, production)
-        return NameFinder.find(beginning, self.persons)
+            self.persons = SQLiteDatabase.get_persons(self.institution, production_id=production_id)
+        return NameFinder.find_person(beginning, self.persons, production_id=production_id)
+
+    def production_find(self, text, institution=None):
+        """Find productions by a name or description text."""
+        if self.productions is None:
+            self.productions = SQLiteDatabase.get_productions(institution_id=self.institution)
+        return NameFinder.find_production(text, self.productions, institution_id=institution)
 
     def set_institution(self, institution_id):
         print('Model switching to institution ' + str(institution_id) + '.')
