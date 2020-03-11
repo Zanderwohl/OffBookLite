@@ -1,25 +1,29 @@
 import os
-from pandas import *
-import numpy as np
+
+themes_directory = 'themes'
 
 
-class Theme:
-    def __init__(self):
-        theme_files = os.listdir(path='themes/')
-        self.themes = []
-        for file in theme_files:
-            theme_csv = read_csv('themes/' + file)
-            theme_csv = np.array(theme_csv)
-            theme = {}
-            for key in theme_csv:
-                theme[key[0]] = key[1]
-            self.themes.append(theme)
-            for key in theme:
-                print(key + ":" + theme[key])
-
-    def get_value(self, theme, key):
-        return self.themes
-    # TODO: Write this function
+def parse_theme(file_path):
+    if not len(file_path.split('.')) == 2:
+        file_path = file_path.lower() + '.config'
+    theme_file = open(themes_directory + '/' + file_path, "r")
+    theme = {}
+    for pair in theme_file:
+        key, value = pair.split("=")
+        theme[key] = value.strip()  # strip() removes newlines.
+    theme_file.close()
+    return theme
 
 
-theme_manager = Theme()
+def construct_themes():
+    if not os.path.exists(themes_directory):
+        os.mkdir(themes_directory)
+    theme_files = os.listdir(path=themes_directory)
+    themes = {}
+    for file in theme_files:
+        new_theme = parse_theme(file)
+        themes[new_theme['Name']] = new_theme
+    return themes
+
+
+print(construct_themes())

@@ -1,5 +1,6 @@
 import SQLiteDatabase
 import NameFinder
+import Theme
 
 
 class Model:
@@ -10,8 +11,18 @@ class Model:
         self.institutions = None
         self.institution = 3
         self.events = None
+
+        self.theme = None
+        self.themes = Theme.construct_themes()
+
         SQLiteDatabase.init_database(file='test')
         print('Model initialized.')
+
+    def set_theme(self, theme_name):
+        self.theme = self.themes[theme_name]
+
+    def get_themes(self):
+        return list(self.themes.keys())
 
     def query_persons(self):
         """Load the list of persons."""

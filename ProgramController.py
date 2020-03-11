@@ -2,14 +2,20 @@ from Model import Model
 
 
 class ProgramController:
-    def __init__(self):
+    def __init__(self, theme):
         print('Controller initialized.')
         self.current_context = None
         self.model = Model()
         self.view = None
+        self.set_theme(theme)
 
     def set_view(self, view):
         self.view = view
+
+    def set_theme(self, name):
+        self.model.set_theme(name)
+        if self.view is not None:
+            self.view.set_theme(self.model.theme)
 
     def switch_to(self, context_name):
         print('Controller switching to "' + context_name + '".')
