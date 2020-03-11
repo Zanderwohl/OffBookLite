@@ -1,6 +1,6 @@
-import SQLiteDatabase
+from OffBookDatabase import SQLiteDatabase
 import NameFinder
-import Theme
+from OffBookGUI import Theme
 
 
 class Model:

@@ -1,5 +1,7 @@
 from tkinter import *
 
+from OffBookGUI.Clocks import TimeClock, DateClock
+
 
 class Window(Frame):
 
@@ -90,6 +92,12 @@ class Window(Frame):
         button_institutions = Button(main_menu_frame, text="Institutions",
                                      command=lambda: self.show_frame('Institutions'))
         button_institutions.pack()
+        time_frame = Frame(main_menu_frame, bg=self.theme['Background'])
+        time_frame.pack()
+        clock = TimeClock(time_frame, self.theme)
+        date = DateClock(time_frame, self.theme)
+        date.pack()
+        clock.pack()
         self.frames.update({'Menu': main_menu_frame})
 
     def add_persons_frame(self):
