@@ -85,3 +85,14 @@ def boolean_to_int(value):
         return 0
     if value is None:
         return None
+
+
+def append_within_date_range(date_range, args, conditions):
+    """Appends a speical condition that ensures an event falls within (inclusive) a date range."""
+    start_date, end_date = date_range
+    if len(date_range) == 2 and date_range is not None and start_date is not None and end_date is not None:
+        args.append(start_date)
+        args.append(start_date)
+        args.append(end_date)
+        args.append(end_date)
+        conditions.append('(startDate >= ? OR endDate >= ?) AND (startDate <= ? or endDate <= ?)')
