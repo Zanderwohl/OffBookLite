@@ -16,7 +16,7 @@ class Model:
     def query_persons(self):
         """Load the list of persons."""
         print('Query of persons...')
-        self.persons = SQLiteDatabase.get_persons(self.institution)
+        self.persons = SQLiteDatabase.get_persons(institution_id=self.institution)
 
     def get_persons(self):
         """Get the list of persons."""
@@ -27,7 +27,7 @@ class Model:
     def query_productions(self):
         """Load the list of productions."""
         print('Query of productions...')
-        self.productions = SQLiteDatabase.get_productions()
+        self.productions = SQLiteDatabase.get_productions(institution_id=self.institution)
 
     def get_productions(self):
         """Get the list of productions."""
@@ -62,3 +62,15 @@ class Model:
         if self.persons is None:
             self.persons = SQLiteDatabase.get_persons(self.institution, production)
         return NameFinder.find(beginning, self.persons)
+
+    def set_institution(self, institution_id):
+        print('Model switching to institution ' + str(institution_id) + '.')
+        ids = [inst['id'] for inst in self.get_institutions()]  # get all id for institutions.
+        print(ids)
+        if institution_id not in ids:
+            raise Exception('Id ' + institution_id + ' is not an existing institution.')
+        self.institution = institution_id
+        self.query_productions()
+        self.query_events()
+        self.query_persons()
+

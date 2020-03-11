@@ -27,3 +27,11 @@ class ProgramController:
 
     def get_productions(self):
         return self.model.get_productions()
+
+    def get_institutions(self):
+        return self.model.get_institutions()
+
+    def switch_institution(self, institution_id):
+        print('Controller switching to institution ' + str(institution_id) + '.')
+        self.model.set_institution(institution_id)
+        self.switch_to(self.current_context)

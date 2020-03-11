@@ -161,15 +161,13 @@ def change_person(person_id, new_f_name=None, new_l_name=None):
         dbc.commit()
 
 
-def get_productions(production_id=None):
+def get_productions(production_id=None, institution_id=None):
     """Gets a list of productions from a particular institution."""
-    if production_id is not None:
-        args = (production_id,)
-        dbc.execute('''SELECT * FROM Productions
-        WHERE productionId = ?
-        ''', args)
-    else:
-        dbc.execute('''SELECT * FROM Productions''')
+    args, conditions = [], []
+    append_condition(production_id, 'productionId = ?', args, conditions)
+    append_condition(institution_id, 'institutionId = ?', args, conditions)
+    query = 'SELECT * FROM Productions ' + SQLPrepare.where_and(conditions) + ';'
+    dbc.execute(query, tuple(args))
     return convert_query(dbc, ['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
 
 

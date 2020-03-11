@@ -10,6 +10,7 @@ class Window(Frame):
         self.frames = {}
         self.current_frame = None
         self.Menu = None
+        self.switch_institution = None
 
         self.pack(side="top", fill="both", expand=True)
         self.grid_rowconfigure(0, weight=1)
@@ -18,6 +19,7 @@ class Window(Frame):
         self.add_menu_bar()
 
         self.add_context_drop()
+        self.add_navigate_drop()
 
         self.add_context_switcher()
         self.add_menu_frame()
@@ -38,6 +40,22 @@ class Window(Frame):
         context_menu.add_command(label="Persons", command=lambda: self.show_frame('Persons'))
         context_menu.add_command(label="Institutions", command=lambda: self.show_frame('Institutions'))
         self.menu.add_cascade(label="Context", menu=context_menu)
+
+    def add_navigate_drop(self):
+        navigate_menu = Menu(self.master)
+        self.switch_institution = Menu(self.master)
+        navigate_menu.add_cascade(label="Switch Institution", menu=self.switch_institution)
+        self.configure_switch_institution()
+        self.menu.add_cascade(label="Navigate", menu=navigate_menu)
+
+    def configure_switch_institution(self):
+        institutions = self.controller.get_institutions()
+        for institution in institutions:
+            if institution['id'] is not 0:
+                print('institution id is ' + str(institution['id']))
+                self.switch_institution.add_cascade(label=institution['name'],
+                                                    command=lambda inst_id=institution['id']:
+                                                    self.controller.switch_institution(inst_id))
 
     def add_context_switcher(self):
         context_switcher = Frame(self, bg="#232323")
