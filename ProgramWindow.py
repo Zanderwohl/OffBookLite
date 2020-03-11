@@ -9,7 +9,7 @@ class Window(Frame):
         self.controller = controller
         self.frames = {}
         self.current_frame = None
-        self.Menu = None
+        self.menu = None
         self.switch_institution = None
 
         self.pack(side="top", fill="both", expand=True)
@@ -52,7 +52,6 @@ class Window(Frame):
         institutions = self.controller.get_institutions()
         for institution in institutions:
             if institution['id'] is not 0:
-                print('institution id is ' + str(institution['id']))
                 self.switch_institution.add_cascade(label=institution['name'],
                                                     command=lambda inst_id=institution['id']:
                                                     self.controller.switch_institution(inst_id))
