@@ -1,9 +1,9 @@
 import sqlite3
-import SQLiteTestEntries
-import SQLPrepare
+from OffBookDatabase import SQLPrepare, SQLiteTestEntries
 import os
 
-from SQLPrepare import convert_query, append_update, append_timestamp, append_condition, boolean_to_int
+from OffBookDatabase.SQLPrepare import convert_query, append_update, append_timestamp, append_condition, \
+    boolean_to_int, append_within_date_range
 
 db = None  # The database object
 dbc = None  # The database cursor
@@ -161,11 +161,12 @@ def change_person(person_id, new_f_name=None, new_l_name=None):
         dbc.commit()
 
 
-def get_productions(production_id=None, institution_id=None):
+def get_productions(production_id=None, institution_id=None, date_range=None):
     """Gets a list of productions from a particular institution."""
     args, conditions = [], []
     append_condition(production_id, 'productionId = ?', args, conditions)
     append_condition(institution_id, 'institutionId = ?', args, conditions)
+    append_within_date_range(date_range, args, conditions)
     query = 'SELECT * FROM Productions ' + SQLPrepare.where_and(conditions) + ';'
     dbc.execute(query, tuple(args))
     return convert_query(dbc, ['id', 'name', 'description', 'institutionId', 'startDate', 'endDate', 'deleted'])
@@ -232,7 +233,7 @@ def change_institution(institution_id, new_name=None):
         dbc.commit()
 
 
-def get_events(institution_id=None, production_id=None, event_id=None, deleted=None):
+def get_events(institution_id=None, production_id=None, event_id=None, deleted=None, date_range=(None, None)):
     """Performs a query on events, giving back all events with certain conditions.
     Ignores the values of conditions not supplied."""
     args, conditions = [], []
@@ -240,6 +241,7 @@ def get_events(institution_id=None, production_id=None, event_id=None, deleted=N
     append_condition(production_id, 'productionId = ?', args, conditions)
     append_condition(event_id, 'eventId = ?', args, conditions)
     append_condition(boolean_to_int(deleted), 'deleted = ?', args, conditions)
+    append_within_date_range(date_range, args, conditions)
     query = 'SELECT * FROM EventsWithInstitutions ' + SQLPrepare.where_and(conditions) + ';'
     dbc.execute(query, tuple(args))
     return convert_query(dbc, ['id', 'name', 'description', 'startDate', 'endDate', 'productionId', 'deleted',

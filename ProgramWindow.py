@@ -1,5 +1,8 @@
 from tkinter import *
 
+from OffBookGUI.Clocks import TimeClock, DateClock
+from OffBookGUI.Locator import Locator
+
 
 class Window(Frame):
 
@@ -7,10 +10,15 @@ class Window(Frame):
         Frame.__init__(self, master)
         self.master = master
         self.controller = controller
+        self.theme = self.controller.model.theme
         self.frames = {}
         self.current_frame = None
-        self.Menu = None
+        self.menu = None
+        self.navigate_menu = None
         self.switch_institution = None
+        self.switch_production = None
+        self.switch_event = None
+        self.location = None
 
         self.pack(side="top", fill="both", expand=True)
         self.grid_rowconfigure(0, weight=1)
@@ -35,41 +43,62 @@ class Window(Frame):
         self.master.config(menu=self.menu)
 
     def add_context_drop(self):
-        context_menu = Menu(self.menu)
+        context_menu = Menu(self.menu, tearoff=0)
         context_menu.add_command(label="Main Menu", command=lambda: self.show_frame('Menu'))
         context_menu.add_command(label="Persons", command=lambda: self.show_frame('Persons'))
         context_menu.add_command(label="Institutions", command=lambda: self.show_frame('Institutions'))
         self.menu.add_cascade(label="Context", menu=context_menu)
 
     def add_navigate_drop(self):
-        navigate_menu = Menu(self.master)
-        self.switch_institution = Menu(self.master)
-        navigate_menu.add_cascade(label="Switch Institution", menu=self.switch_institution)
+        self.navigate_menu = Menu(self.master, tearoff=0)
+        self.switch_institution = Menu(self.master, tearoff=0)
+        self.navigate_menu.add_cascade(label='Switch Institution', menu=self.switch_institution)
+        self.switch_production = Menu(self.master, tearoff=0)
+        self.navigate_menu.add_cascade(label='Switch Production', menu=self.switch_production)
+        self.switch_event = Menu(self.master, tearoff=0)
+        self.navigate_menu.add_cascade(label='Switch Event', menu=self.switch_event)
         self.configure_switch_institution()
-        self.menu.add_cascade(label="Navigate", menu=navigate_menu)
+        self.configure_switch_production()
+        self.configure_switch_event()
+        self.menu.add_cascade(label='Navigate', menu=self.navigate_menu)
 
     def configure_switch_institution(self):
-        institutions = self.controller.get_institutions()
-        for institution in institutions:
-            if institution['id'] is not 0:
-                print('institution id is ' + str(institution['id']))
+        institutions = self.controller.get_institutions().items()
+        for _id, institution in institutions:
+            if not institution['id'] == 0:
                 self.switch_institution.add_cascade(label=institution['name'],
                                                     command=lambda inst_id=institution['id']:
                                                     self.controller.switch_institution(inst_id))
 
+    def configure_switch_production(self):
+        productions = self.controller.get_productions().items()
+        for _id, production in productions:
+            self.switch_production.add_cascade(label=production['name'],
+                                               command=lambda prod_id=production['id']:
+                                               self.controller.switch_production(prod_id))
+
+    def configure_switch_event(self):
+        events = self.controller.get_events().items()
+        for _id, event in events:
+            self.switch_event.add_cascade(label=event['startDate'] + ' ' + event['name'],
+                                          command=lambda event_id=event['id']:
+                                          self.controller.switch_event(event_id))
+
     def add_context_switcher(self):
-        context_switcher = Frame(self, bg="#232323")
+        context_switcher = Frame(self, bg=self.theme['Tabs Background'])
         context_switcher.pack(side=BOTTOM, fill=BOTH)
         self.add_context_button(context_switcher, 'Home', 'Menu')
         self.add_context_button(context_switcher, 'Persons', 'Persons')
         self.add_context_button(context_switcher, 'Institutions', 'Institutions')
         self.add_context_button(context_switcher, 'Productions', 'Productions')
         self.add_context_button(context_switcher, 'Events', 'Events')
+        self.location = Locator(context_switcher, self.theme)
+        self.location.pack()
         self.frames.update({'Context Switcher': context_switcher})
 
     def add_context_button(self, context_switcher, text, frame_name):
         button = Button(context_switcher, text=text, command=lambda: self.show_frame(frame_name),
-                        height=2, bg="#555555", fg="#DDDDDD")
+                        height=2, bg=self.theme['Button Background'], fg=self.theme['Button Foreground'])
         button.pack(side=LEFT, padx=10, pady=10)
 
     def add_calc_drop(self):
@@ -84,20 +113,28 @@ class Window(Frame):
         self.controller.exit(1)
 
     def add_menu_frame(self):
-        main_menu_frame = Frame(self, bg='#555555')
+        main_menu_frame = Frame(self, bg=self.theme['Background'])
         button_persons = Button(main_menu_frame, text='Persons', command=lambda: self.show_frame('Persons'))
         button_persons.pack()
         button_institutions = Button(main_menu_frame, text="Institutions",
                                      command=lambda: self.show_frame('Institutions'))
         button_institutions.pack()
+        time_frame = Frame(main_menu_frame, bg=self.theme['Background'])
+        time_frame.pack()
+        clock = TimeClock(time_frame, self.theme)
+        date = DateClock(time_frame, self.theme)
+        date.pack()
+        clock.pack()
         self.frames.update({'Menu': main_menu_frame})
 
     def add_persons_frame(self):
-        persons_frame = Frame(self, bg='#555555')
+        persons_frame = Frame(self, bg=self.theme['Background'])
+        # button = Button(persons_frame, text="You're in Persons")
+        # button.pack()
         self.frames['Persons List'] = None
         self.frames.update({'Persons': persons_frame})
 
-    def update_persons_frame(self):
+    def update_persons_frame(self, persons):
         if self.frames['Persons List'] is not None:
             print("Replacing it!")
             self.frames['Persons List'].pack_forget()
@@ -108,15 +145,21 @@ class Window(Frame):
 
         persons = self.controller.get_persons()
 
-        for i in range(len(persons)):
-            frame = self.add_person_frame(persons[i], self.frames['Persons List'], i)
+        # print(persons)
+        for i, key in enumerate(persons):
+            frame = self.add_person_frame(persons[key], self.frames['Persons List'], i)
             frame.pack(fill=X, expand=True)
+            # label = persons[i]['fName'] + " " + persons[i]['lName']
+            # new_button = Button(self.frames['Persons'], text=label)
+            # new_button.grid(column=0, row=i)
 
     def add_person_frame(self, person, parent, index):
+        # label = person['fName'] + " " + person['lName']
+        # new_button = Button(parent, text=label)
         if index % 2 == 0:
-            color = '#3F3F3F'
+            color = self.theme['List A']
         else:
-            color = '#303030'
+            color = self.theme['List B']
         meta_frame = Frame(parent)
         frame = self.generate_person_frame_small(person, parent, index, meta_frame, None, color)
         return meta_frame
@@ -129,12 +172,13 @@ class Window(Frame):
         frame.columnconfigure(2, weight=2)
         frame.columnconfigure(3, weight=1)
         name_text = person['fName'] + ' ' + person['lName']
-        name_label = Label(frame, text=name_text, padx=10, pady=10, bg=color, fg="#DEDEDE")
+        name_label = Label(frame, text=name_text, padx=10, pady=10, bg=color, fg=self.theme['Text'])
         name_label.grid(column=1, row=0)
         expand_button = Button(frame, text="More", padx=10,
                                command=lambda: self.generate_person_frame_large(
                                    person, parent, index, meta_frame, frame, color))
         expand_button.grid(column=3, row=0)
+        # new_button.grid(column=0, row=index)
         frame.pack(fill=X, expand=True)
         return frame
 
@@ -151,22 +195,25 @@ class Window(Frame):
         frame.rowconfigure(3, weight=1)
         frame.rowconfigure(5, weight=1)
         name_text = person['fName'] + ' ' + person['lName']
-        name_label = Label(frame, text=name_text, padx=10, pady=60, bg=color, fg="#DEDEDE")
+        name_label = Label(frame, text=name_text, padx=10, pady=60, bg=color, fg=self.theme['Text'])
         name_label.grid(column=1, row=0)
         expand_button = Button(frame, text="Less", padx=10,
-                               command=lambda:
-                               self.generate_person_frame_small(person, parent, index, meta_frame, frame, color))
+                               command=lambda: self.generate_person_frame_small(
+                                   person, parent, index, meta_frame, frame, color))
         expand_button.grid(column=3, row=0)
+        # new_button.grid(column=0, row=index)
         frame.pack(fill=X, expand=True)
 
     def add_institutions_frame(self):
-        institutions_frame = Frame(self, bg='#555555')
+        institutions_frame = Frame(self, bg=self.theme['Background'])
         button = Button(institutions_frame, text='You\'re in Institutions')
         button.pack()
         self.frames.update({'Institutions': institutions_frame})
 
     def add_productions_frame(self):
-        productions_frame = Frame(self, bg='#555555')
+        productions_frame = Frame(self, bg=self.theme['Background'])
+        # button = Button(productions_frame, text='You\'re in Productions')
+        # button.pack()
         self.frames['Productions List'] = None
         self.frames.update({'Productions': productions_frame})
 
@@ -184,12 +231,17 @@ class Window(Frame):
         for i in range(len(productions)):
             frame = self.add_production_frame(productions[i], self.frames['Productions List'], i)
             frame.pack(fill=X, expand=True)
+            # label = persons[i]['fName'] + " " + persons[i]['lName']
+            # new_button = Button(self.frames['Persons'], text=label)
+            # new_button.grid(column=0, row=i)
 
     def add_production_frame(self, person, parent, index):
+        # label = person['fName'] + " " + person['lName']
+        # new_button = Button(parent, text=label)
         if index % 2 == 0:
-            color = '#3F3F3F'
+            color = self.theme['List A']
         else:
-            color = '#303030'
+            color = self.theme['List B']
         meta_frame = Frame(parent)
         frame = self.generate_production_frame_small(person, parent, index, meta_frame, None, color)
         return meta_frame
@@ -202,12 +254,13 @@ class Window(Frame):
         frame.columnconfigure(2, weight=2)
         frame.columnconfigure(3, weight=1)
         name_text = production['name']
-        name_label = Label(frame, text=name_text, padx=10, pady=10, bg=color, fg='#DEDEDE')
+        name_label = Label(frame, text=name_text, padx=10, pady=10, bg=color, fg=self.theme['Text'])
         name_label.grid(column=1, row=0)
         expand_button = Button(frame, text='More', padx=10,
                                command=lambda: self.generate_production_frame_large(
                                    production, parent, index, meta_frame, frame, color))
         expand_button.grid(column=3, row=0)
+        # new_button.grid(column=0, row=index)
         frame.pack(fill=X, expand=True)
         return frame
 
@@ -224,29 +277,38 @@ class Window(Frame):
         frame.rowconfigure(3, weight=1)
         frame.rowconfigure(5, weight=1)
         name_text = production['name']
-        name_label = Label(frame, text=name_text, padx=10, pady=60, bg=color, fg='#DEDEDE')
+        name_label = Label(frame, text=name_text, padx=10, pady=60, bg=color, fg=self.theme['Text'])
         name_label.grid(column=1, row=0)
         expand_button = Button(frame, text='Less', padx=10,
                                command=lambda: self.generate_production_frame_small(
                                    production, parent, index, meta_frame, frame, color))
         expand_button.grid(column=3, row=0)
+        # new_button.grid(column=0, row=index)
         frame.pack(fill=X, expand=True)
 
     def add_events_frame(self):
-        events_frame = Frame(self, bg='#555555')
+        events_frame = Frame(self, bg=self.theme['Background'])
         button = Button(events_frame, text='You\'re in Events')
         button.pack()
         self.frames.update({'Events': events_frame})
 
     def show_frame(self, name):
-        print('Window switching to frame "' + name + '".')
+        # print('Window switching to frame "' + name + '".')
         self.controller.switch_to(name)
         if self.current_frame is not None:
             self.current_frame.pack_forget()
         frame = self.frames[name]
         self.current_frame = frame
         frame.pack(fill=BOTH, expand=True)
-        print('Window switched.')
+        # print('Window switched.')
+
+    def set_theme(self, theme):
+        self.theme = theme
+
+    def refresh(self):
+        self.location.update(self.controller.current_institution(),
+                             self.controller.current_production(),
+                             self.controller.current_event())
 
 
 def show_window(controller):
