@@ -15,27 +15,40 @@ def load_settings(config_file_name):
         config.close()
         return settings
     except FileNotFoundError:
-        pass
-    raise Exception("File 'settings.config' not found. Installation may be incomplete or corrupted.")
+        config = open(config_file_name, 'w')
+        config.write('Theme=Dark\nInstitution=0\nProduction=0\nEvent=0')  # TODO: Make this more generalized.
+        config.close()
+        return load_settings(config_file_name)
 
 
 class ProgramController:
     def __init__(self):
         print('Controller initialized.')
         self.current_context = None
-        self.settings = load_settings('settings.config')
         self.model = Model()
+        self.settings = load_settings('settings.config')
+        self.set_settings()
         self.view = None
         self.set_theme(self.settings['Theme'])
+
+    def set_settings(self):
+        self.model.query_institutions()
+        # print(self.model.get_institutions())
+        self.model.set_institution(int(self.settings['Institution']))
+        self.model.set_production(int(self.settings['Production']))
+        self.model.set_event(int(self.settings['Event']))
 
     def close_program(self, status=0, origin=None):
         self.save_settings('settings.config')
         sys.exit(0)
 
     def save_settings(self, config_file_name):
+        self.settings['Institution'] = self.model.institution
+        self.settings['Production'] = self.model.production
+        self.settings['Event'] = self.model.event
         config = open(config_file_name, 'w')
         for key in self.settings:
-            config.write(key + '=' + self.settings[key] + '\n')
+            config.write(key + '=' + str(self.settings[key]) + '\n')
         config.close()
 
     def set_view(self, view):

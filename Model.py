@@ -106,7 +106,11 @@ class Model:
         ids = self.get_institutions().keys()  # get all id for institutions.
         # print(ids)
         if institution_id not in ids:
-            raise Exception('Id ' + institution_id + ' is not an existing institution.')
+            first_institution = list(self.get_institutions().values())[1]['id']
+            print(first_institution)
+            self.set_institution(first_institution)
+            return
+            # raise Exception('Id ' + institution_id + ' is not an existing institution.')
         self.institution = institution_id
         self.query_productions()
         self.query_events()
@@ -117,7 +121,10 @@ class Model:
         ids = self.get_productions().keys()
         # print(ids)
         if production_id not in ids:
-            raise Exception('Id ' + production_id + ' is not an existing production.')
+            first_production = list(self.get_productions().values())[0]['id']
+            self.set_production(first_production)
+            return
+            # raise Exception('Id ' + production_id + ' is not an existing production.')
         self.production = production_id
         self.query_events()
         self.query_persons()
@@ -127,6 +134,9 @@ class Model:
         ids = self.get_events().keys()
         # print(ids)
         if event_id not in ids:
-            raise Exception('Id ' + event_id + ' is not an existing event.')
+            first_event = list(self.get_events().values())[0]['id']
+            self.set_event(first_event)
+            return
+            # raise Exception('Id ' + event_id + ' is not an existing event.')
         self.event = event_id
         self.query_persons()
