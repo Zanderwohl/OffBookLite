@@ -145,8 +145,9 @@ class Window(Frame):
 
         persons = self.controller.get_persons()
 
-        for i in range(len(persons)):
-            frame = self.add_person_frame(persons[i], self.frames['Persons List'], i)
+        # print(persons)
+        for i, key in enumerate(persons):
+            frame = self.add_person_frame(persons[key], self.frames['Persons List'], i)
             frame.pack(fill=X, expand=True)
             # label = persons[i]['fName'] + " " + persons[i]['lName']
             # new_button = Button(self.frames['Persons'], text=label)

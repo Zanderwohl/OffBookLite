@@ -11,6 +11,6 @@ class Locator(Label):
         if production is None:
             production = {'name': 'None'}
         if event is None:
-            event = {'name': 'None', 'startTime': ''}
-        text = institution['name'] + '>' + production['name'] + '>' + event['startTime'] + ' ' + event['name']
+            event = {'name': 'None', 'startDate': ''}
+        text = institution['name'] + '>' + production['name'] + '>' + event['startDate'] + ' ' + event['name']
         super().config(text=text)
