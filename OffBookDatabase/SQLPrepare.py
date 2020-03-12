@@ -40,7 +40,8 @@ if __name__ == "__main__":
 def convert_query(dbc, keys):
     """Takes the results of a query (stored in this file's scope)
     and turns it into an array of dictionaries."""
-    query = []
+    # query = []
+    query = {}
     while True:
         next_row = dbc.fetchone()
         # print(next_row)
@@ -50,8 +51,8 @@ def convert_query(dbc, keys):
         next_row_dictionary = {}
         for entry, key in zip(next_row, keys):
             next_row_dictionary.update({key: entry})
-        query.append(next_row_dictionary)
-    #    print(query)
+        # print(next_row_dictionary['id'])
+        query[next_row_dictionary['id']] = next_row_dictionary
     return query
 
 
@@ -89,10 +90,11 @@ def boolean_to_int(value):
 
 def append_within_date_range(date_range, args, conditions):
     """Appends a speical condition that ensures an event falls within (inclusive) a date range."""
-    start_date, end_date = date_range
-    if len(date_range) == 2 and date_range is not None and start_date is not None and end_date is not None:
-        args.append(start_date)
-        args.append(start_date)
-        args.append(end_date)
-        args.append(end_date)
-        conditions.append('(startDate >= ? OR endDate >= ?) AND (startDate <= ? or endDate <= ?)')
+    if date_range is not None and len(date_range) == 2:
+        start_date, end_date = date_range
+        if len(date_range) == 2 and start_date is not None and end_date is not None:
+            args.append(start_date)
+            args.append(start_date)
+            args.append(end_date)
+            args.append(end_date)
+            conditions.append('(startDate >= ? OR endDate >= ?) AND (startDate <= ? or endDate <= ?)')

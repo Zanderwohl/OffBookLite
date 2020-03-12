@@ -9,14 +9,35 @@ class Model:
         self.persons = None
         self.productions = None
         self.institutions = None
-        self.institution = 3
         self.events = None
+
+        self.institution = 0
+        self.production = None
+        self.event = None
 
         self.theme = None
         self.themes = Theme.construct_themes()
 
         SQLiteDatabase.init_database(file='test')
         print('Model initialized.')
+
+    def current_institution(self):
+        try:
+            return self.institutions[self.institution]
+        except KeyError:
+            return None
+
+    def current_production(self):
+        try:
+            return self.productions[self.production]
+        except KeyError:
+            return None
+
+    def current_event(self):
+        try:
+            return self.events[self.event]
+        except KeyError:
+            return None
 
     def set_theme(self, theme_name):
         self.theme = self.themes[theme_name]
@@ -26,7 +47,7 @@ class Model:
 
     def query_persons(self):
         """Load the list of persons."""
-        print('Query of persons...')
+        # print('Query of persons...')
         self.persons = SQLiteDatabase.get_persons(institution_id=self.institution)
 
     def get_persons(self):
@@ -37,7 +58,7 @@ class Model:
 
     def query_productions(self):
         """Load the list of productions."""
-        print('Query of productions...')
+        # print('Query of productions...')
         self.productions = SQLiteDatabase.get_productions(institution_id=self.institution)
 
     def get_productions(self):
@@ -48,7 +69,7 @@ class Model:
 
     def query_institutions(self):
         """Load the list of institutions."""
-        print('Query of institutions...')
+        # print('Query of institutions...')
         self.institutions = SQLiteDatabase.get_institutions()
 
     def get_institutions(self):
@@ -59,8 +80,8 @@ class Model:
 
     def query_events(self):
         """Load the list of events."""
-        print('Query of events.')
-        self.events = SQLiteDatabase.get_events()
+        # print('Query of events.')
+        self.events = SQLiteDatabase.get_events(production_id=self.production, institution_id=self.institution)
 
     def get_events(self):
         """Get the list of events."""
@@ -82,8 +103,8 @@ class Model:
 
     def set_institution(self, institution_id):
         print('Model switching to institution ' + str(institution_id) + '.')
-        ids = [inst['id'] for inst in self.get_institutions()]  # get all id for institutions.
-        print(ids)
+        ids = self.get_institutions().keys()  # get all id for institutions.
+        # print(ids)
         if institution_id not in ids:
             raise Exception('Id ' + institution_id + ' is not an existing institution.')
         self.institution = institution_id
@@ -91,3 +112,21 @@ class Model:
         self.query_events()
         self.query_persons()
 
+    def set_production(self, production_id):
+        print('Model switching to production ' + str(production_id) + '.')
+        ids = self.get_productions().keys()
+        # print(ids)
+        if production_id not in ids:
+            raise Exception('Id ' + production_id + ' is not an existing production.')
+        self.production = production_id
+        self.query_events()
+        self.query_persons()
+
+    def set_event(self, event_id):
+        print('Model switching to event ' + str(event_id) + '.')
+        ids = self.get_events().keys()
+        # print(ids)
+        if event_id not in ids:
+            raise Exception('Id ' + event_id + ' is not an existing event.')
+        self.event = event_id
+        self.query_persons()

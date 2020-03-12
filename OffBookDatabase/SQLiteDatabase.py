@@ -2,8 +2,8 @@ import sqlite3
 from OffBookDatabase import SQLPrepare, SQLiteTestEntries
 import os
 
-from OffBookDatabase.SQLPrepare import convert_query, append_update, append_timestamp, append_condition, boolean_to_int, \
-append_within_date_range
+from OffBookDatabase.SQLPrepare import convert_query, append_update, append_timestamp, append_condition, \
+    boolean_to_int, append_within_date_range
 
 db = None  # The database object
 dbc = None  # The database cursor

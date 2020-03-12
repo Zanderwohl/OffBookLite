@@ -1,6 +1,7 @@
 from tkinter import *
 
 from OffBookGUI.Clocks import TimeClock, DateClock
+from OffBookGUI.Locator import Locator
 
 
 class Window(Frame):
@@ -13,7 +14,11 @@ class Window(Frame):
         self.frames = {}
         self.current_frame = None
         self.menu = None
+        self.navigate_menu = None
         self.switch_institution = None
+        self.switch_production = None
+        self.switch_event = None
+        self.location = None
 
         self.pack(side="top", fill="both", expand=True)
         self.grid_rowconfigure(0, weight=1)
@@ -38,26 +43,46 @@ class Window(Frame):
         self.master.config(menu=self.menu)
 
     def add_context_drop(self):
-        context_menu = Menu(self.menu)
+        context_menu = Menu(self.menu, tearoff=0)
         context_menu.add_command(label="Main Menu", command=lambda: self.show_frame('Menu'))
         context_menu.add_command(label="Persons", command=lambda: self.show_frame('Persons'))
         context_menu.add_command(label="Institutions", command=lambda: self.show_frame('Institutions'))
         self.menu.add_cascade(label="Context", menu=context_menu)
 
     def add_navigate_drop(self):
-        navigate_menu = Menu(self.master)
-        self.switch_institution = Menu(self.master)
-        navigate_menu.add_cascade(label="Switch Institution", menu=self.switch_institution)
+        self.navigate_menu = Menu(self.master, tearoff=0)
+        self.switch_institution = Menu(self.master, tearoff=0)
+        self.navigate_menu.add_cascade(label='Switch Institution', menu=self.switch_institution)
+        self.switch_production = Menu(self.master, tearoff=0)
+        self.navigate_menu.add_cascade(label='Switch Production', menu=self.switch_production)
+        self.switch_event = Menu(self.master, tearoff=0)
+        self.navigate_menu.add_cascade(label='Switch Event', menu=self.switch_event)
         self.configure_switch_institution()
-        self.menu.add_cascade(label="Navigate", menu=navigate_menu)
+        self.configure_switch_production()
+        self.configure_switch_event()
+        self.menu.add_cascade(label='Navigate', menu=self.navigate_menu)
 
     def configure_switch_institution(self):
-        institutions = self.controller.get_institutions()
-        for institution in institutions:
+        institutions = self.controller.get_institutions().items()
+        for _id, institution in institutions:
             if not institution['id'] == 0:
                 self.switch_institution.add_cascade(label=institution['name'],
                                                     command=lambda inst_id=institution['id']:
                                                     self.controller.switch_institution(inst_id))
+
+    def configure_switch_production(self):
+        productions = self.controller.get_productions().items()
+        for _id, production in productions:
+            self.switch_production.add_cascade(label=production['name'],
+                                               command=lambda prod_id=production['id']:
+                                               self.controller.switch_production(prod_id))
+
+    def configure_switch_event(self):
+        events = self.controller.get_events().items()
+        for _id, event in events:
+            self.switch_event.add_cascade(label=event['startDate'] + ' ' + event['name'],
+                                          command=lambda event_id=event['id']:
+                                          self.controller.switch_event(event_id))
 
     def add_context_switcher(self):
         context_switcher = Frame(self, bg=self.theme['Tabs Background'])
@@ -67,6 +92,8 @@ class Window(Frame):
         self.add_context_button(context_switcher, 'Institutions', 'Institutions')
         self.add_context_button(context_switcher, 'Productions', 'Productions')
         self.add_context_button(context_switcher, 'Events', 'Events')
+        self.location = Locator(context_switcher, self.theme)
+        self.location.pack()
         self.frames.update({'Context Switcher': context_switcher})
 
     def add_context_button(self, context_switcher, text, frame_name):
@@ -265,17 +292,22 @@ class Window(Frame):
         self.frames.update({'Events': events_frame})
 
     def show_frame(self, name):
-        print('Window switching to frame "' + name + '".')
+        # print('Window switching to frame "' + name + '".')
         self.controller.switch_to(name)
         if self.current_frame is not None:
             self.current_frame.pack_forget()
         frame = self.frames[name]
         self.current_frame = frame
         frame.pack(fill=BOTH, expand=True)
-        print('Window switched.')
+        # print('Window switched.')
 
     def set_theme(self, theme):
         self.theme = theme
+
+    def refresh(self):
+        self.location.update(self.controller.current_institution(),
+                             self.controller.current_production(),
+                             self.controller.current_event())
 
 
 def show_window(controller):
