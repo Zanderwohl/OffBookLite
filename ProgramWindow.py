@@ -26,6 +26,7 @@ class Window(Frame):
 
         self.add_menu_bar()
 
+        self.add_file_drop()
         self.add_context_drop()
         self.add_navigate_drop()
 
@@ -42,11 +43,18 @@ class Window(Frame):
         self.menu = Menu(self.master)
         self.master.config(menu=self.menu)
 
+    def add_file_drop(self):
+        file_menu = Menu(self.menu, tearoff=0)
+        file_menu.add_command(label='Exit', command=self.v_exit)
+        self.menu.add_cascade(label='File', menu=file_menu)
+
     def add_context_drop(self):
         context_menu = Menu(self.menu, tearoff=0)
         context_menu.add_command(label="Main Menu", command=lambda: self.show_frame('Menu'))
         context_menu.add_command(label="Persons", command=lambda: self.show_frame('Persons'))
         context_menu.add_command(label="Institutions", command=lambda: self.show_frame('Institutions'))
+        context_menu.add_command(label="Productions", command=lambda: self.show_frame('Productions'))
+        context_menu.add_command(label="Events", command=lambda: self.show_frame('Events'))
         self.menu.add_cascade(label="Context", menu=context_menu)
 
     def add_navigate_drop(self):
@@ -94,6 +102,12 @@ class Window(Frame):
         self.add_context_button(context_switcher, 'Events', 'Events')
         self.location = Locator(context_switcher, self.theme)
         self.location.pack()
+        time_frame = Frame(context_switcher, bg=self.theme['Background'])
+        time_frame.pack()
+        clock = TimeClock(time_frame, self.theme)
+        date = DateClock(time_frame, self.theme)
+        date.pack()
+        clock.pack()
         self.frames.update({'Context Switcher': context_switcher})
 
     def add_context_button(self, context_switcher, text, frame_name):
@@ -110,7 +124,7 @@ class Window(Frame):
         self.menu.add_cascade(label="Calculate", menu=calc_menu)
 
     def v_exit(self):
-        self.controller.exit(1)
+        self.controller.close_program(origin='ProgramWindow')
 
     def add_menu_frame(self):
         main_menu_frame = Frame(self, bg=self.theme['Background'])
@@ -119,12 +133,6 @@ class Window(Frame):
         button_institutions = Button(main_menu_frame, text="Institutions",
                                      command=lambda: self.show_frame('Institutions'))
         button_institutions.pack()
-        time_frame = Frame(main_menu_frame, bg=self.theme['Background'])
-        time_frame.pack()
-        clock = TimeClock(time_frame, self.theme)
-        date = DateClock(time_frame, self.theme)
-        date.pack()
-        clock.pack()
         self.frames.update({'Menu': main_menu_frame})
 
     def add_persons_frame(self):

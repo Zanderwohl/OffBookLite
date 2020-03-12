@@ -28,7 +28,7 @@ class ProgramController:
         self.view = None
         self.set_theme(self.settings['Theme'])
 
-    def close_program(self):
+    def close_program(self, status=0, origin=None):
         self.save_settings('settings.config')
         sys.exit(0)
 
