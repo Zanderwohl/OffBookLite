@@ -137,8 +137,6 @@ class Window(Frame):
 
     def add_persons_frame(self):
         persons_frame = Frame(self, bg=self.theme['Background'])
-        # button = Button(persons_frame, text="You're in Persons")
-        # button.pack()
         self.frames['Persons List'] = None
         self.frames.update({'Persons': persons_frame})
 
@@ -157,13 +155,8 @@ class Window(Frame):
         for i, key in enumerate(persons):
             frame = self.add_person_frame(persons[key], self.frames['Persons List'], i)
             frame.pack(fill=X, expand=True)
-            # label = persons[i]['fName'] + " " + persons[i]['lName']
-            # new_button = Button(self.frames['Persons'], text=label)
-            # new_button.grid(column=0, row=i)
 
     def add_person_frame(self, person, parent, index):
-        # label = person['fName'] + " " + person['lName']
-        # new_button = Button(parent, text=label)
         if index % 2 == 0:
             color = self.theme['List A']
         else:
@@ -220,12 +213,10 @@ class Window(Frame):
 
     def add_productions_frame(self):
         productions_frame = Frame(self, bg=self.theme['Background'])
-        # button = Button(productions_frame, text='You\'re in Productions')
-        # button.pack()
         self.frames['Productions List'] = None
         self.frames.update({'Productions': productions_frame})
 
-    def update_productions_frame(self, persons):
+    def update_productions_frame(self):
         if self.frames['Productions List'] is not None:
             print("Replacing it!")
             self.frames['Productions List'].pack_forget()
@@ -239,13 +230,8 @@ class Window(Frame):
         for i in range(len(productions)):
             frame = self.add_production_frame(productions[i], self.frames['Productions List'], i)
             frame.pack(fill=X, expand=True)
-            # label = persons[i]['fName'] + " " + persons[i]['lName']
-            # new_button = Button(self.frames['Persons'], text=label)
-            # new_button.grid(column=0, row=i)
 
     def add_production_frame(self, person, parent, index):
-        # label = person['fName'] + " " + person['lName']
-        # new_button = Button(parent, text=label)
         if index % 2 == 0:
             color = self.theme['List A']
         else:
