@@ -14,9 +14,9 @@ def where_and(conditions):
     return where_clause
 
 
-def comma_seperate(items):
+def comma_separate(items):
     if not isinstance(items, list):
-        raise Exception('Argument given to SQLPrepare.comma_seperate is not a list.')
+        raise Exception('Argument given to SQLPrepare.comma_separate is not a list.')
     if len(items) == 0:
         return ''
     expanded_list = ''
@@ -31,10 +31,10 @@ if __name__ == "__main__":
     print(where_and(["row = ?"]))
     print(where_and(["row = ?", "anotherRow = ?"]))
     print(where_and(["row = ?", "anotherRow = ?", "thirdRow = 0"]))
-    print(comma_seperate(['n = ?', 'm = 5']))
-    print(comma_seperate(['n = ?']))
+    print(comma_separate(['n = ?', 'm = 5']))
+    print(comma_separate(['n = ?']))
     # print(comma_seperate('n = 4'))
-    print(comma_seperate(['n = ?', 'l = ?', 'f = ?']))
+    print(comma_separate(['n = ?', 'l = ?', 'f = ?']))
 
 
 def convert_query(dbc, keys):

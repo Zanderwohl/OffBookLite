@@ -157,7 +157,7 @@ def change_person(person_id, new_f_name=None, new_l_name=None):
     append_timestamp(updates)
     args.append(person_id)
     if len(updates) > 0:
-        query = 'UPDATE Persons SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
+        query = 'UPDATE Persons SET ' + SQLPrepare.comma_separate(updates) + ' WHERE id = ?;'
         dbc.execute(query, tuple(args))
         dbc.commit()
 
@@ -197,7 +197,7 @@ def change_production(production_id, new_name=None, new_description=None, new_st
     append_timestamp(updates)
     args.append(production_id)
     if len(updates) > 0:
-        query = 'UPDATE Productions SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
+        query = 'UPDATE Productions SET ' + SQLPrepare.comma_separate(updates) + ' WHERE id = ?;'
         dbc.execute(query, tuple(args))
         dbc.commit()
 
@@ -229,7 +229,7 @@ def change_institution(institution_id, new_name=None):
     append_timestamp(updates)
     args.append(institution_id)
     if len(updates) > 0:
-        query = 'UPDATE Institutions SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
+        query = 'UPDATE Institutions SET ' + SQLPrepare.comma_separate(updates) + ' WHERE id = ?;'
         dbc.execute(query, tuple(args))
         dbc.commit()
 
@@ -273,7 +273,7 @@ def change_event(event_id, new_name=None, new_description=None, new_start_date=N
     append_timestamp(updates)
     args.append(event_id)
     if len(updates) > 0:
-        query = 'UPDATE Events SET ' + SQLPrepare.comma_seperate(updates) + ' WHERE id = ?;'
+        query = 'UPDATE Events SET ' + SQLPrepare.comma_separate(updates) + ' WHERE id = ?;'
         dbc.execute(query, tuple(args))
         dbc.commit()
 
@@ -300,7 +300,7 @@ def change_role(role_id, new_name=None, new_short_name=None):
     append_update(new_short_name, 'shortName', updates, args)
     args.append(role_id)
     if len(updates) > 0:
-        query = 'UPDATE Roles SET ' + SQLPrepare.comma_seperate(updates) + ' where id = ?'
+        query = 'UPDATE Roles SET ' + SQLPrepare.comma_separate(updates) + ' where id = ?'
         dbc.execute(query, args)
         dbc.commit()
 
