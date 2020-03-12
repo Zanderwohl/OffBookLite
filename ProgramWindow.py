@@ -136,7 +136,7 @@ class Window(Frame):
 
     def update_persons_frame(self, persons):
         if self.frames['Persons List'] is not None:
-            print("Replacing it!")
+            # print("Replacing it!")
             self.frames['Persons List'].pack_forget()
             self.frames['Persons List'].destroy()
 
@@ -313,6 +313,7 @@ class Window(Frame):
 
 def show_window(controller):
     root = Tk()
+    root.protocol("WM_DELETE_WINDOW", controller.close_program)
     app = Window(root, controller)
 
     root.wm_title("OffBook Lite")

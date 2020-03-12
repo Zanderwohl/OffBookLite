@@ -1,13 +1,42 @@
+import sys
+
 from Model import Model
 
 
+def load_settings(config_file_name):
+    try:
+        config = open(config_file_name, 'r')
+        settings = {}
+        for line in config:
+            pair = line.split('=')
+            if len(pair) == 2:
+                key, value = pair
+                settings[key] = value.strip()
+        config.close()
+        return settings
+    except FileNotFoundError:
+        pass
+    raise Exception("File 'settings.config' not found. Installation may be incomplete or corrupted.")
+
+
 class ProgramController:
-    def __init__(self, theme):
+    def __init__(self):
         print('Controller initialized.')
         self.current_context = None
+        self.settings = load_settings('settings.config')
         self.model = Model()
         self.view = None
-        self.set_theme(theme)
+        self.set_theme(self.settings['Theme'])
+
+    def close_program(self):
+        self.save_settings('settings.config')
+        sys.exit(0)
+
+    def save_settings(self, config_file_name):
+        config = open(config_file_name, 'w')
+        for key in self.settings:
+            config.write(key + '=' + self.settings[key] + '\n')
+        config.close()
 
     def set_view(self, view):
         self.view = view
