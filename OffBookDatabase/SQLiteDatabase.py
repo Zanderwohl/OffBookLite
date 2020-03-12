@@ -16,12 +16,13 @@ def db_path():
     return db_directory + '/' + db_file + '.' + db_extension
 
 
-def init_database(file='data', extension='db'):
+def init_database(directory='data', file='data', extension='db'):
     """Opens the database, places in it and the cursor in memory,
     and create the db file if it doesn't exist."""
-    global db, dbc, db_file, db_extension
+    global db, dbc, db_file, db_extension, db_directory
     db_file = file
     db_extension = extension
+    db_directory = directory
     print(db_path())
 
     # if the db file does not exist, we have to install.
