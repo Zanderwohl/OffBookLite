@@ -60,6 +60,9 @@ class ProgramController:
         if self.view is not None:
             self.view.set_theme(self.model.theme)
 
+    def current_theme(self):
+        return self.model.current_theme()
+
     def switch_to(self, context_name):
         # print('Controller switching to "' + context_name + '".')
         if self.view is not None:
@@ -87,24 +90,19 @@ class ProgramController:
 
     def switch_institution(self, institution_id):
         print('Controller switching to institution ' + str(institution_id) + '.')
-        self.view.switch_production.delete(0, len(self.model.productions))
         self.model.set_institution(institution_id)
-        self.view.configure_switch_production()
-        # TODO: Switch to no production, possibly.
+        self.view.switch_institution(self.get_productions())
         self.switch_to(self.current_context)
 
     def switch_production(self, production_id):
         print('Controller switching to production ' + str(production_id) + '.')
-        self.view.switch_event.delete(0, len(self.model.events))
         self.model.set_production(production_id)
-        self.view.configure_switch_event()
-        # TODO: Switch to no event, possibly.
+        self.view.switch_production(self.get_events())
         self.switch_to(self.current_context)
 
     def switch_event(self, event_id):
         print('Controller switching to event ' + str(event_id) + '.')
         self.model.set_event(event_id)
-
         self.switch_to(self.current_context)
 
     def current_institution(self):

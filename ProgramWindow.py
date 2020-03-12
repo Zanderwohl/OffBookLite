@@ -1,6 +1,7 @@
 from tkinter import *
 
 from OffBookGUI.Clocks import TimeClock, DateClock
+from OffBookGUI.DropdownManager import DropdownManager
 from OffBookGUI.Locator import Locator
 
 
@@ -10,25 +11,18 @@ class Window(Frame):
         Frame.__init__(self, master)
         self.master = master
         self.controller = controller
-        self.theme = self.controller.model.theme
+        self.theme = self.controller.current_theme()
         self.frames = {}
         self.current_frame = None
-        self.menu = None
-        self.navigate_menu = None
-        self.switch_institution = None
-        self.switch_production = None
-        self.switch_event = None
+        self.drop = DropdownManager(self, controller, master,
+                                    controller.get_institutions(),
+                                    controller.get_productions(),
+                                    controller.get_events())
         self.location = None
 
         self.pack(side="top", fill="both", expand=True)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-        self.add_menu_bar()
-
-        self.add_file_drop()
-        self.add_context_drop()
-        self.add_navigate_drop()
 
         self.add_context_switcher()
         self.add_menu_frame()
@@ -39,58 +33,11 @@ class Window(Frame):
 
         self.show_frame('Menu')
 
-    def add_menu_bar(self):
-        self.menu = Menu(self.master)
-        self.master.config(menu=self.menu)
+    def switch_institution(self, productions):
+        self.drop.configure_switch_production(productions)
 
-    def add_file_drop(self):
-        file_menu = Menu(self.menu, tearoff=0)
-        file_menu.add_command(label='Exit', command=self.v_exit)
-        self.menu.add_cascade(label='File', menu=file_menu)
-
-    def add_context_drop(self):
-        context_menu = Menu(self.menu, tearoff=0)
-        context_menu.add_command(label="Main Menu", command=lambda: self.show_frame('Menu'))
-        context_menu.add_command(label="Persons", command=lambda: self.show_frame('Persons'))
-        context_menu.add_command(label="Institutions", command=lambda: self.show_frame('Institutions'))
-        context_menu.add_command(label="Productions", command=lambda: self.show_frame('Productions'))
-        context_menu.add_command(label="Events", command=lambda: self.show_frame('Events'))
-        self.menu.add_cascade(label="Context", menu=context_menu)
-
-    def add_navigate_drop(self):
-        self.navigate_menu = Menu(self.master, tearoff=0)
-        self.switch_institution = Menu(self.master, tearoff=0)
-        self.navigate_menu.add_cascade(label='Switch Institution', menu=self.switch_institution)
-        self.switch_production = Menu(self.master, tearoff=0)
-        self.navigate_menu.add_cascade(label='Switch Production', menu=self.switch_production)
-        self.switch_event = Menu(self.master, tearoff=0)
-        self.navigate_menu.add_cascade(label='Switch Event', menu=self.switch_event)
-        self.configure_switch_institution()
-        self.configure_switch_production()
-        self.configure_switch_event()
-        self.menu.add_cascade(label='Navigate', menu=self.navigate_menu)
-
-    def configure_switch_institution(self):
-        institutions = self.controller.get_institutions().items()
-        for _id, institution in institutions:
-            if not institution['id'] == 0:
-                self.switch_institution.add_cascade(label=institution['name'],
-                                                    command=lambda inst_id=institution['id']:
-                                                    self.controller.switch_institution(inst_id))
-
-    def configure_switch_production(self):
-        productions = self.controller.get_productions().items()
-        for _id, production in productions:
-            self.switch_production.add_cascade(label=production['name'],
-                                               command=lambda prod_id=production['id']:
-                                               self.controller.switch_production(prod_id))
-
-    def configure_switch_event(self):
-        events = self.controller.get_events().items()
-        for _id, event in events:
-            self.switch_event.add_cascade(label=event['startDate'] + ' ' + event['name'],
-                                          command=lambda event_id=event['id']:
-                                          self.controller.switch_event(event_id))
+    def switch_production(self, events):
+        self.drop.configure_switch_event(events)
 
     def add_context_switcher(self):
         context_switcher = Frame(self, bg=self.theme['Tabs Background'])

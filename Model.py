@@ -42,6 +42,9 @@ class Model:
     def set_theme(self, theme_name):
         self.theme = self.themes[theme_name]
 
+    def current_theme(self):
+        return self.theme
+
     def get_themes(self):
         return list(self.themes.keys())
 
