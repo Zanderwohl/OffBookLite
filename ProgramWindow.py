@@ -163,7 +163,7 @@ class Window(Frame):
         self.frames['Productions List'] = None
         self.frames.update({'Productions': productions_frame})
 
-    def update_productions_frame(self):
+    def update_productions_frame(self, productions):
         if self.frames['Productions List'] is not None:
             print("Replacing it!")
             self.frames['Productions List'].pack_forget()
@@ -172,10 +172,10 @@ class Window(Frame):
         self.frames['Productions List'] = Frame(self.frames['Productions'])
         self.frames['Productions List'].pack(fill=X)
 
-        productions = self.controller.get_productions()
+        # productions = self.controller.get_productions()
 
-        for i in range(len(productions)):
-            frame = self.add_production_frame(productions[i], self.frames['Productions List'], i)
+        for i, key in enumerate(productions.keys()):
+            frame = self.add_production_frame(productions[key], self.frames['Productions List'], i)
             frame.pack(fill=X, expand=True)
 
     def add_production_frame(self, person, parent, index):
