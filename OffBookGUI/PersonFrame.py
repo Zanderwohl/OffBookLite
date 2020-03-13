@@ -4,7 +4,7 @@ from tkinter import *
 
 class PersonFrame:
     def __init__(self, person_data, view, theme, holder_frame, color='#FFFFFF'):
-        print(person_data)
+        # print(person_data)
         self.id = person_data.get('id') or person_data['personId']  # gets id unless id does not exist, then personId
         self.f_name = person_data['fName']
         self.l_name = person_data['lName']
@@ -51,6 +51,9 @@ class PersonFrame:
         expand_button = Button(frame, text="More", padx=10,
                                command=lambda: self.switch_frame(self.color, 'expanded'))
         expand_button.grid(column=3, row=0)
+        edit_button = Button(frame, text='Edit', padx=10,
+                             command=lambda: self.switch_frame(self.color, 'edit'))
+        edit_button.grid(column=0, row=0)
         return frame
 
     def create_expanded_frame(self):
@@ -69,10 +72,20 @@ class PersonFrame:
         expand_button = Button(frame, text="Less", padx=10,
                                command=lambda: self.switch_frame(self.color, 'minimal'))
         expand_button.grid(column=3, row=0)
+        edit_button = Button(frame, text='Edit', padx=10,
+                             command=lambda: self.switch_frame(self.color, 'edit'))
+        edit_button.grid(column=0, row=0)
         return frame
 
     def create_edit_frame(self):
-        return 0
+        frame = Frame(self.holder_frame)
+        name_text = self.f_name + ' ' + self.l_name
+        name_label = Label(frame, text=name_text, padx=10, pady=60, fg=self.theme['Text'], bg=self.color)
+        name_label.grid(column=1, row=0)
+        retract_button = Button(frame, text='Save', padx=10,
+                                command=lambda: self.switch_frame(self.color, 'expanded'))
+        retract_button.grid(column=0, row=0)
+        return frame
 
     def save(self):
         self.unsaved = False
