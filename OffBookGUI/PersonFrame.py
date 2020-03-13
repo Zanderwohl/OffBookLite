@@ -13,6 +13,7 @@ class PersonFrame:
         self.role_id = person_data.get('roleId')
         self.role_name = person_data.get('roleName')
         self.role_name_short = person_data.get('shortRoleName')
+        self.expanded = False
         self.unsaved = False
         self.theme = theme
         self.color = color
@@ -26,13 +27,20 @@ class PersonFrame:
 
     def get_frame(self, size='minimal'):
         if size == 'minimal':
+            self.expanded = False
             return self.minimal_frame
         if size == 'expanded':
+            self.expanded = True
             return self.expanded_frame
         if size == 'edit':
             return self.edit_frame
 
     def switch_frame(self, background_color, size='minimal'):
+        if size == 'save':
+            if self.expanded:
+                size = 'expanded'
+            else:
+                size = 'minimal'
         if self.active_frame is not None:
             self.active_frame.pack_forget()
         new_frame = self.get_frame(size=size)
@@ -83,7 +91,7 @@ class PersonFrame:
         name_label = Label(frame, text=name_text, padx=10, pady=60, fg=self.theme['Text'], bg=self.color)
         name_label.grid(column=1, row=0)
         retract_button = Button(frame, text='Save', padx=10,
-                                command=lambda: self.switch_frame(self.color, 'expanded'))
+                                command=lambda: self.switch_frame(self.color, 'save'))
         retract_button.grid(column=0, row=0)
         return frame
 
