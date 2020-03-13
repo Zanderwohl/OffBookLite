@@ -3,6 +3,7 @@ from tkinter import *
 from OffBookGUI.Clocks import TimeClock, DateClock
 from OffBookGUI.DropdownManager import DropdownManager
 from OffBookGUI.Locator import Locator
+from OffBookGUI.PersonFrame import PersonFrame
 
 
 class Window(Frame):
@@ -27,6 +28,7 @@ class Window(Frame):
         self.add_context_switcher()
         self.add_menu_frame()
         self.add_persons_frame()
+        self.persons_frames = []
         self.add_institutions_frame()
         self.add_productions_frame()
         self.add_events_frame()
@@ -98,10 +100,14 @@ class Window(Frame):
 
         persons = self.controller.get_persons()
 
+        self.persons_frames = []
+
         # print(persons)
         for i, key in enumerate(persons):
-            frame = self.add_person_frame(persons[key], self.frames['Persons List'], i)
-            frame.pack(fill=X, expand=True)
+            meta_frame, person_frame = self.add_person_frame(persons[key], self.frames['Persons List'], i)
+            # print(person_frame)
+            self.persons_frames.append(person_frame)
+            meta_frame.pack(fill=X, expand=True)
 
     def add_person_frame(self, person, parent, index):
         if index % 2 == 0:
@@ -109,8 +115,9 @@ class Window(Frame):
         else:
             color = self.theme['List B']
         meta_frame = Frame(parent)
-        frame = self.generate_person_frame_small(person, parent, index, meta_frame, None, color)
-        return meta_frame
+        # frame = self.generate_person_frame_small(person, parent, index, meta_frame, None, color)
+        person_frame = PersonFrame(person, self, self.theme, meta_frame, color=color)
+        return meta_frame, person_frame
 
     def generate_person_frame_small(self, person, parent, index, meta_frame, old_frame, color):
         if old_frame is not None:
