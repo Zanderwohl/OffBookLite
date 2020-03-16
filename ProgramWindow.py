@@ -144,50 +144,9 @@ class Window(Frame):
             color = self.theme['List A']
         else:
             color = self.theme['List B']
-
         meta_frame = Frame(parent)
         production_frame = ProductionFrame(person, self, self.theme, meta_frame, color=color)
         return meta_frame, production_frame
-
-    def generate_production_frame_small(self, production, parent, index, meta_frame, old_frame, color):
-        if old_frame is not None:
-            old_frame.pack_forget()
-        frame = Frame(meta_frame, bg=color)
-        frame.columnconfigure(1, weight=1)
-        frame.columnconfigure(2, weight=2)
-        frame.columnconfigure(3, weight=1)
-        name_text = production['name']
-        name_label = Label(frame, text=name_text, padx=10, pady=10, bg=color, fg=self.theme['Text'])
-        name_label.grid(column=1, row=0)
-        expand_button = Button(frame, text='More', padx=10,
-                               command=lambda: self.generate_production_frame_large(
-                                   production, parent, index, meta_frame, frame, color))
-        expand_button.grid(column=3, row=0)
-        # new_button.grid(column=0, row=index)
-        frame.pack(fill=X, expand=True)
-        return frame
-
-    def generate_production_frame_large(self, production, parent, index, meta_frame, old_frame, color):
-        if old_frame is not None:
-            old_frame.pack_forget()
-        frame = Frame(meta_frame, bg=color)
-        frame.columnconfigure(1, weight=1)
-        frame.columnconfigure(2, weight=2)
-        frame.columnconfigure(3, weight=1)
-        frame.rowconfigure(0, weight=1)
-        frame.rowconfigure(1, weight=1)
-        frame.rowconfigure(2, weight=1)
-        frame.rowconfigure(3, weight=1)
-        frame.rowconfigure(5, weight=1)
-        name_text = production['name']
-        name_label = Label(frame, text=name_text, padx=10, pady=60, bg=color, fg=self.theme['Text'])
-        name_label.grid(column=1, row=0)
-        expand_button = Button(frame, text='Less', padx=10,
-                               command=lambda: self.generate_production_frame_small(
-                                   production, parent, index, meta_frame, frame, color))
-        expand_button.grid(column=3, row=0)
-        # new_button.grid(column=0, row=index)
-        frame.pack(fill=X, expand=True)
 
     def add_events_frame(self):
         events_frame = Frame(self, bg=self.theme['Background'])
