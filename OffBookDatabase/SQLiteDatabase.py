@@ -121,10 +121,14 @@ def install_database():
     db.commit()
 
 
-def __delete_database_file__():
+def close():
     if db is not None:
         db.commit()
         db.close()
+
+
+def __delete_database_file__():
+    close()
     os.remove(db_path())
 
 

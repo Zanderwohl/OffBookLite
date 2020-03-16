@@ -22,6 +22,9 @@ class Model:
         SQLiteDatabase.init_database(file='test')
         print('Model initialized.')
 
+    def close(self):
+        SQLiteDatabase.close()
+
     def current_institution(self):
         try:
             return self.institutions[self.institution]

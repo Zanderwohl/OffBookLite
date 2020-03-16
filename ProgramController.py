@@ -39,6 +39,7 @@ class ProgramController:
         self.model.set_event(int(self.settings['Event']))
 
     def close_program(self, status=0, origin=None):
+        self.model.close()
         self.save_settings('settings.config')
         sys.exit(0)
 
