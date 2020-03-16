@@ -5,7 +5,7 @@ from OffBookGUI import Theme
 
 class Model:
     """Manages all the data for the program, and deals with the database."""
-    def __init__(self):
+    def __init__(self, settings):
         self.persons = None
         self.productions = None
         self.institutions = None
@@ -19,7 +19,8 @@ class Model:
         self.theme = None
         self.themes = Theme.construct_themes()
 
-        SQLiteDatabase.init_database(file='test')
+        reset = settings.get('reset', False)
+        SQLiteDatabase.init_database(file='test', reset=reset)
         print('Model initialized.')
 
     def close(self):

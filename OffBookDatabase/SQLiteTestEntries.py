@@ -20,7 +20,7 @@ def populate(table, dbc):
                     query += ', '
             query += ');'
             values = tuple(row)
-            print(query, values)
+            # print(query, values)
             dbc.execute(query, values)
 
 

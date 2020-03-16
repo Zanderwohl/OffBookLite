@@ -25,8 +25,8 @@ class ProgramController:
     def __init__(self):
         print('Controller initialized.')
         self.current_context = None
-        self.model = Model()
         self.settings = load_settings('settings.config')
+        self.model = Model(self.settings)
         self.set_settings()
         self.view = None
         self.set_theme(self.settings['Theme'])

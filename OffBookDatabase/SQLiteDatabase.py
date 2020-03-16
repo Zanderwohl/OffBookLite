@@ -16,7 +16,7 @@ def db_path():
     return db_directory + '/' + db_file + '.' + db_extension
 
 
-def init_database(directory='data', file='data', extension='db'):
+def init_database(directory='data', file='data', extension='db', reset=''):
     """Opens the database, places in it and the cursor in memory,
     and create the db file if it doesn't exist."""
     global db, dbc, db_file, db_extension, db_directory
@@ -27,12 +27,14 @@ def init_database(directory='data', file='data', extension='db'):
 
     # if the db file does not exist, we have to install.
     need_to_install = False
-    __delete_database_file__()
+    if reset == 'True':
+        print('Resetting database.')
+        __delete_database_file__()
     try:
         f = open(db_path())
         f.close()
     except IOError:
-        print('need to install')
+        print('Need to install database.')
         if not os.path.exists(db_directory):
             os.mkdir(db_directory)
         need_to_install = True
