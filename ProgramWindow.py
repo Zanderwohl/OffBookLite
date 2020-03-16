@@ -67,14 +67,6 @@ class Window(Frame):
                         height=2, bg=self.theme['Button Background'], fg=self.theme['Button Foreground'])
         button.pack(side=LEFT, padx=10, pady=10)
 
-    def add_calc_drop(self):
-        calc_menu = Menu(self.menu)
-        calc_menu.add_command(label="Torch Burn")
-        calc_menu.add_command(label="Hohmann Transfer")
-        calc_menu.add_separator()
-        calc_menu.add_command(label="Radio Time")
-        self.menu.add_cascade(label="Calculate", menu=calc_menu)
-
     def v_exit(self):
         self.controller.close_program(origin='ProgramWindow')
 

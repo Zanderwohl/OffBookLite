@@ -13,6 +13,7 @@ class DropdownManager:
 
     def __add_file__(self, window):
         file_menu = Menu(self.menu_bar, tearoff=0)
+        file_menu.add_separator()
         file_menu.add_command(label='Exit', command=window.v_exit)
         self.menu_bar.add_cascade(label='File', menu=file_menu)
 
