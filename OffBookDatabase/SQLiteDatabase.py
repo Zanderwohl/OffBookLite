@@ -27,6 +27,7 @@ def init_database(directory='data', file='data', extension='db'):
 
     # if the db file does not exist, we have to install.
     need_to_install = False
+    __delete_database_file__()
     try:
         f = open(db_path())
         f.close()
@@ -89,11 +90,16 @@ def install_database():
         shortName       TEXT
     );
     ''')  # given an institutionId of 0, this role should be copied to each new institution.
-    dbc.execute('''CREATE TABLE PersonProductionRoles(
+    dbc.execute('''CREATE TABLE PersonProductionRoles (
         person          INTEGER REFERENCES Persons(id),
         production      INTEGER REFERENCES Productions(id),
         role            INTEGER REFERENCES Roles(id),
         lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+    ''')
+    dbc.execute('''CREATE TABLE Quotes (
+        quote           TEXT,
+        author          TEXT
     );
     ''')
     dbc.execute('''CREATE VIEW EventsWithInstitutions AS
@@ -116,8 +122,9 @@ def install_database():
 
 
 def __delete_database_file__():
-    db.commit()
-    db.close()
+    if db is not None:
+        db.commit()
+        db.close()
     os.remove(db_path())
 
 
@@ -305,8 +312,13 @@ def change_role(role_id, new_name=None, new_short_name=None):
         dbc.commit()
 
 
+def get_quotes():
+    dbc.execute('SELECT * FROM Quotes;')
+    return convert_query(dbc, ['quote', 'author'])
+
 # init_database()
 # db.commit()
+
 
 if __name__ == "__main__":
     # __delete_database_file__()

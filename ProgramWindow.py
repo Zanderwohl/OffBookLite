@@ -5,6 +5,7 @@ from OffBookGUI.DropdownManager import DropdownManager
 from OffBookGUI.Locator import Locator
 from OffBookGUI.PersonFrame import PersonFrame
 from OffBookGUI.ProductionFrame import ProductionFrame
+from OffBookGUI.QOTD import QOTD
 
 
 class Window(Frame):
@@ -79,11 +80,8 @@ class Window(Frame):
 
     def add_menu_frame(self):
         main_menu_frame = Frame(self, bg=self.theme['Background'])
-        button_persons = Button(main_menu_frame, text='Persons', command=lambda: self.show_frame('Persons'))
-        button_persons.pack()
-        button_institutions = Button(main_menu_frame, text="Institutions",
-                                     command=lambda: self.show_frame('Institutions'))
-        button_institutions.pack()
+        quote_of_the_day = QOTD(main_menu_frame, self.theme, self.controller.get_quotes())
+        quote_of_the_day.pack()
         self.frames.update({'Menu': main_menu_frame})
 
     def add_persons_frame(self):

@@ -31,6 +31,7 @@ def create(dbc):
     populate('Events', dbc)
     populate('Roles', dbc)
     populate('PersonProductionRoles', dbc)
+    populate('Quotes', dbc)
 
 
 if __name__ == "__main__":

@@ -52,7 +52,10 @@ def convert_query(dbc, keys):
         for entry, key in zip(next_row, keys):
             next_row_dictionary.update({key: entry})
         # print(next_row_dictionary['id'])
-        query[next_row_dictionary['id']] = next_row_dictionary
+        try:        # if there is an id, key it by that.
+            query[next_row_dictionary['id']] = next_row_dictionary
+        except KeyError:
+            query[str(len(query))] = next_row_dictionary
     return query
 
 

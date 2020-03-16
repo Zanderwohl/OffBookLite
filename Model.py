@@ -10,6 +10,7 @@ class Model:
         self.productions = None
         self.institutions = None
         self.events = None
+        self.quotes = None
 
         self.institution = 0
         self.production = None
@@ -91,6 +92,16 @@ class Model:
         if self.events is None:
             self.query_events()
         return self.events
+
+    def query_quotes(self):
+        """Load this list of quotes."""
+        self.quotes = SQLiteDatabase.get_quotes()
+
+    def get_quotes(self):
+        """Get the list of quotes."""
+        if self.quotes is None:
+            self.query_quotes()
+        return self.quotes
 
     def name_find(self, beginning, production_id):
         """Find persons by a name."""

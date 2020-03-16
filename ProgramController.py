@@ -88,6 +88,9 @@ class ProgramController:
     def get_events(self):
         return self.model.get_events()
 
+    def get_quotes(self):
+        return self.model.get_quotes()
+
     def switch_institution(self, institution_id):
         print('Controller switching to institution ' + str(institution_id) + '.')
         self.model.set_institution(institution_id)
