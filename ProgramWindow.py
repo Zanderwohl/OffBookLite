@@ -4,6 +4,7 @@ from OffBookGUI.Clocks import TimeClock, DateClock
 from OffBookGUI.DropdownManager import DropdownManager
 from OffBookGUI.Locator import Locator
 from OffBookGUI.PersonFrame import PersonFrame
+from OffBookGUI.ProductionFrame import ProductionFrame
 
 
 class Window(Frame):
@@ -29,6 +30,7 @@ class Window(Frame):
         self.add_menu_frame()
         self.add_persons_frame()
         self.persons_frames = []
+        self.productions_frames = []
         self.add_institutions_frame()
         self.add_productions_frame()
         self.add_events_frame()
@@ -140,18 +142,22 @@ class Window(Frame):
 
         # productions = self.controller.get_productions()
 
+        self.productions_frames = []
+
         for i, key in enumerate(productions.keys()):
-            frame = self.add_production_frame(productions[key], self.frames['Productions List'], i)
-            frame.pack(fill=X, expand=True)
+            meta_frame, production_frame = self.add_production_frame(productions[key], self.frames['Productions List'], i)
+            self.persons_frames.append(production_frame)
+            meta_frame.pack(fill=X, expand=True)
 
     def add_production_frame(self, person, parent, index):
         if index % 2 == 0:
             color = self.theme['List A']
         else:
             color = self.theme['List B']
+
         meta_frame = Frame(parent)
-        frame = self.generate_production_frame_small(person, parent, index, meta_frame, None, color)
-        return meta_frame
+        production_frame = ProductionFrame(person, self, self.theme, meta_frame, color=color)
+        return meta_frame, production_frame
 
     def generate_production_frame_small(self, production, parent, index, meta_frame, old_frame, color):
         if old_frame is not None:
