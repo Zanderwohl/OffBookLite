@@ -2,6 +2,7 @@ from tkinter import *
 
 from OffBookGUI.Clocks import TimeClock, DateClock
 from OffBookGUI.DropdownManager import DropdownManager
+from OffBookGUI.EventFrame import EventFrame
 from OffBookGUI.InstitutionFrame import InstitutionFrame
 from OffBookGUI.Locator import Locator
 from OffBookGUI.PersonFrame import PersonFrame
@@ -32,11 +33,12 @@ class Window(Frame):
         self.add_menu_frame()
         self.add_persons_frame()
         self.persons_frames = []
-        self.productions_frames = []
-        self.institutions_frames = []
         self.add_institutions_frame()
+        self.institutions_frames = []
         self.add_productions_frame()
+        self.productions_frames = []
         self.add_events_frame()
+        self.events_frames = []
 
         self.show_frame('Menu')
 
@@ -155,9 +157,27 @@ class Window(Frame):
 
     def add_events_frame(self):
         events_frame = Frame(self, bg=self.theme['Background'])
-        button = Button(events_frame, text='You\'re in Events')
-        button.pack()
+        self.frames['Events List'] = Frame()
         self.frames.update({'Events': events_frame})
+
+    def update_events_frame(self, events):
+        self.reset_frame('Events List', 'Events')
+
+        self.events_frames = []
+
+        for i, key in enumerate(events.keys()):
+            meta_frame, event_frame = self.add_event_frame(events[key], self.frames['Events List'], i)
+            self.persons_frames.append(event_frame)
+            meta_frame.pack(fill=X, expand=True)
+
+    def add_event_frame(self, event, parent, index):
+        if index % 2 == 0:
+            color = self.theme['List A']
+        else:
+            color = self.theme['List B']
+        meta_frame = Frame(parent)
+        event_frame = EventFrame(event, self, self.theme, meta_frame, color)
+        return meta_frame, event_frame
 
     def show_frame(self, name):
         # print('Window switching to frame "' + name + '".')
@@ -178,12 +198,18 @@ class Window(Frame):
                              self.controller.current_event())
 
     def reset_frame(self, frame_name, frame_parent):
-        if self.frames[frame_name] is not None:
+        if self.frames.get(frame_name) is not None:
             self.frames[frame_name].pack_forget()
             self.frames[frame_name].destroy()
 
         self.frames[frame_name] = Frame(self.frames[frame_parent])
         self.frames[frame_name].pack(fill=X)
+
+    def list_color(self, index):
+        if index % 2 == 0:
+            return self.theme['List A']
+        else:
+            return self.theme['List B']
 
 
 def show_window(controller):

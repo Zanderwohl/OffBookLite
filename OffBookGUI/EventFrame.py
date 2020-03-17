@@ -1,12 +1,16 @@
 from tkinter import *
 
 
-class InstitutionFrame:
-    def __init__(self, institution_data, view, theme, holder_frame, color='#FFFFFF'):
-        # print(institution_data)
-        # print(institution_data.get('id'))
-        self.id = institution_data.get('id') or institution_data.get('institutionId')
-        self.name = institution_data.get('name') or institution_data.get('institutionName')
+class EventFrame:
+    def __init__(self, event_data, view, theme, holder_frame, color='#FFFFFF'):
+        self.id = event_data.get('id') or event_data.get('eventId')
+        self.name = event_data.get('name') or event_data.get('eventName')
+        self.description = event_data.get('description')
+        self.start_date = event_data.get('startDate')
+        self.end_date = event_data.get('endDate')
+        self.production_id = event_data.get('productionId')
+        self.production_name = event_data.get('productionName')
+        self.institution_id = event_data.get('institutionId')
         self.expanded = False
         self.unsaved = False
         self.theme = theme

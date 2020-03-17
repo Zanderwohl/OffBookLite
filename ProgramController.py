@@ -78,6 +78,9 @@ class ProgramController:
         if context_name == 'Institutions':
             self.model.query_institutions()
             self.view.update_institutions_frame(self.model.get_institutions())
+        if context_name == 'Events':
+            self.model.query_events()
+            self.view.update_events_frame(self.model.get_events())
         # print('Controller switched.')
 
     def get_persons(self):
