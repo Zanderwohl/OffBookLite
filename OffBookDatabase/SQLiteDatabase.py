@@ -106,7 +106,7 @@ def install_database():
     ''')
     dbc.execute('''CREATE VIEW EventsWithInstitutions AS
         SELECT Events.id as EventId, Events.name, Events.description, Events.startDate, Events.endDate,
-        Events.productionId, Events.deleted, Productions.institutionId
+        Events.productionId, Events.deleted, Productions.institutionId, Productions.name productionName
         FROM Events JOIN Productions
         ON Productions.id == Events.productionId;''')
     dbc.execute('''
