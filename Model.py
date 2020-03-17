@@ -151,6 +151,10 @@ class Model:
         print('Model switching to event ' + str(event_id) + '.')
         ids = self.get_events().keys()
         # print(ids)
+        if len(ids) == 0:
+            self.event = None
+            self.query_persons()
+            return
         if event_id not in ids:
             first_event = list(self.get_events().values())[0]['id']
             self.set_event(first_event)
