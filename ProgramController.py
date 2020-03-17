@@ -75,6 +75,9 @@ class ProgramController:
         if context_name == 'Productions':
             self.model.query_productions()
             self.view.update_productions_frame(self.model.get_productions())
+        if context_name == 'Institutions':
+            self.model.query_institutions()
+            self.view.update_institutions_frame(self.model.get_institutions())
         # print('Controller switched.')
 
     def get_persons(self):

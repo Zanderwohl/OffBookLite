@@ -2,6 +2,7 @@ from tkinter import *
 
 from OffBookGUI.Clocks import TimeClock, DateClock
 from OffBookGUI.DropdownManager import DropdownManager
+from OffBookGUI.InstitutionFrame import InstitutionFrame
 from OffBookGUI.Locator import Locator
 from OffBookGUI.PersonFrame import PersonFrame
 from OffBookGUI.ProductionFrame import ProductionFrame
@@ -32,6 +33,7 @@ class Window(Frame):
         self.add_persons_frame()
         self.persons_frames = []
         self.productions_frames = []
+        self.institutions_frames = []
         self.add_institutions_frame()
         self.add_productions_frame()
         self.add_events_frame()
@@ -90,8 +92,6 @@ class Window(Frame):
         self.frames['Persons List'] = Frame(self.frames['Persons'])
         self.frames['Persons List'].pack(fill=X)
 
-        persons = self.controller.get_persons()
-
         self.persons_frames = []
 
         # print(persons)
@@ -112,13 +112,39 @@ class Window(Frame):
 
     def add_institutions_frame(self):
         institutions_frame = Frame(self, bg=self.theme['Background'])
-        button = Button(institutions_frame, text='You\'re in Institutions')
-        button.pack()
+        self.frames['Institutions List'] = None
         self.frames.update({'Institutions': institutions_frame})
+
+    def update_institutions_frame(self, institutions):
+        if self.frames['Institutions List'] is not None:
+            self.frames['Institutions List'].pack_forget()
+            self.frames['Institutions List'].destroy()
+
+        self.frames['Institutions List'] = Frame(self.frames['Institutions'])
+        self.frames['Institutions List'].pack(fill=X)
+
+        print(institutions)
+
+        self.institutions_frames = []
+
+        for i, key in enumerate(institutions):
+            meta_frame, institution_frame = self.add_institution_frame(institutions[key],
+                                                                        self.frames['Institutions List'], i)
+            self.persons_frames.append(institution_frame)
+            meta_frame.pack(fill=X, expand=True)
+
+    def add_institution_frame(self, institution, parent, index):
+        if index % 2 == 0:
+            color = self.theme['List A']
+        else:
+            color = self.theme['List B']
+        meta_frame = Frame(parent)
+        person_frame = InstitutionFrame(institution, self, self.theme, meta_frame, color)
+        return meta_frame, person_frame
 
     def add_productions_frame(self):
         productions_frame = Frame(self, bg=self.theme['Background'])
-        self.frames['Productions List'] = None
+        self.frames['Productions List'] = Frame()
         self.frames.update({'Productions': productions_frame})
 
     def update_productions_frame(self, productions):
