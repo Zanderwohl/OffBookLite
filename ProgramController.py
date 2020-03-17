@@ -21,6 +21,10 @@ def load_settings(config_file_name):
         return load_settings(config_file_name)
 
 
+def none_filter(item):
+    return item
+
+
 class ProgramController:
     def __init__(self):
         print('Controller initialized.')
@@ -34,9 +38,9 @@ class ProgramController:
     def set_settings(self):
         self.model.query_institutions()
         # print(self.model.get_institutions())
-        self.model.set_institution(int(self.settings['Institution']))
-        self.model.set_production(int(self.settings['Production']))
-        self.model.set_event(int(self.settings['Event']))
+        self.model.set_institution(none_filter(self.settings['Institution']))
+        self.model.set_production(none_filter(self.settings['Production']))
+        self.model.set_event(none_filter(self.settings['Event']))
 
     def close_program(self, status=0, origin=None):
         self.model.close()
