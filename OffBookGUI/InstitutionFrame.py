@@ -3,8 +3,8 @@ from tkinter import *
 
 class InstitutionFrame:
     def __init__(self, institution_data, view, theme, holder_frame, color='#FFFFFF'):
-        print(institution_data)
-        print(institution_data.get('id'))
+        # print(institution_data)
+        # print(institution_data.get('id'))
         self.id = institution_data.get('id') or institution_data.get('institutionId')
         self.name = institution_data.get('name') or institution_data.get('institutionName')
         self.expanded = False

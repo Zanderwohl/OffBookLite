@@ -84,13 +84,7 @@ class Window(Frame):
         self.frames.update({'Persons': persons_frame})
 
     def update_persons_frame(self, persons):
-        if self.frames['Persons List'] is not None:
-            # print("Replacing it!")
-            self.frames['Persons List'].pack_forget()
-            self.frames['Persons List'].destroy()
-
-        self.frames['Persons List'] = Frame(self.frames['Persons'])
-        self.frames['Persons List'].pack(fill=X)
+        self.reset_frame('Persons List', 'Persons')
 
         self.persons_frames = []
 
@@ -116,14 +110,7 @@ class Window(Frame):
         self.frames.update({'Institutions': institutions_frame})
 
     def update_institutions_frame(self, institutions):
-        if self.frames['Institutions List'] is not None:
-            self.frames['Institutions List'].pack_forget()
-            self.frames['Institutions List'].destroy()
-
-        self.frames['Institutions List'] = Frame(self.frames['Institutions'])
-        self.frames['Institutions List'].pack(fill=X)
-
-        print(institutions)
+        self.reset_frame('Institutions List', 'Institutions')
 
         self.institutions_frames = []
 
@@ -148,15 +135,7 @@ class Window(Frame):
         self.frames.update({'Productions': productions_frame})
 
     def update_productions_frame(self, productions):
-        if self.frames['Productions List'] is not None:
-            print("Replacing it!")
-            self.frames['Productions List'].pack_forget()
-            self.frames['Productions List'].destroy()
-
-        self.frames['Productions List'] = Frame(self.frames['Productions'])
-        self.frames['Productions List'].pack(fill=X)
-
-        # productions = self.controller.get_productions()
+        self.reset_frame('Productions List', 'Productions')
 
         self.productions_frames = []
 
@@ -197,6 +176,14 @@ class Window(Frame):
         self.location.update(self.controller.current_institution(),
                              self.controller.current_production(),
                              self.controller.current_event())
+
+    def reset_frame(self, frame_name, frame_parent):
+        if self.frames[frame_name] is not None:
+            self.frames[frame_name].pack_forget()
+            self.frames[frame_name].destroy()
+
+        self.frames[frame_name] = Frame(self.frames[frame_parent])
+        self.frames[frame_name].pack(fill=X)
 
 
 def show_window(controller):

@@ -3,7 +3,7 @@ from tkinter import *
 
 class ProductionFrame:
     def __init__(self, production_data, view, theme, holder_frame, color='#FFFFFF'):
-        self.id = production_data.get('id') or production_data['productionId']
+        self.id = production_data.get('id') or production_data.get('productionId')
         self.name = production_data.get('name')
         self.description = production_data.get('description')
         self.start_date = production_data.get('startDate')

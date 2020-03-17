@@ -5,7 +5,7 @@ from tkinter import *
 class PersonFrame:
     def __init__(self, person_data, view, theme, holder_frame, color='#FFFFFF'):
         # print(person_data)
-        self.id = person_data.get('id') or person_data['personId']  # gets id unless id does not exist, then personId
+        self.id = person_data.get('id') or person_data.get('personId')  # gets id unless id does not exist, then personId
         self.f_name = person_data['fName']
         self.l_name = person_data['lName']
         self.institution_id = person_data['institutionId']
