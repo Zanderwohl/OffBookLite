@@ -10,7 +10,8 @@ class ScrollFrame(Frame):
         self.scrollbar = Scrollbar(holder_frame, orient="vertical", command=self.canvas.yview)
         self.canvas.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.pack(side='right', fill='y')
-        self.canvas.pack(side='left')
+        self.canvas.pack(side='left', fill='x')
+        self.child_frame.pack()
         self.items = []
 
     def add(self, item):
@@ -19,3 +20,12 @@ class ScrollFrame(Frame):
 
     def get_canvas(self):
         return self.canvas
+
+    def reset_child(self):
+        # for item in self.items:
+        #    item.pack_forget()
+        #    item.destroy()
+        self.items = []
+        self.child_frame.pack_forget()
+        self.child_frame.destroy()
+        self.child_frame = Frame(self.canvas)

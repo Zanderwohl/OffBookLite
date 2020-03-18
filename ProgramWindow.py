@@ -8,6 +8,7 @@ from OffBookGUI.Locator import Locator
 from OffBookGUI.PersonFrame import PersonFrame
 from OffBookGUI.ProductionFrame import ProductionFrame
 from OffBookGUI.QOTD import QOTD
+from OffBookGUI.ScrollFrame import ScrollFrame
 
 
 class Window(Frame):
@@ -133,18 +134,21 @@ class Window(Frame):
 
     def add_productions_frame(self):
         productions_frame = Frame(self, bg=self.theme['Background'])
-        self.frames['Productions List'] = Frame()
+        self.frames['Productions List'] = None
         self.frames.update({'Productions': productions_frame})
 
     def update_productions_frame(self, productions):
-        self.reset_frame('Productions List', 'Productions')
+        self.reset_frame('Productions List', 'Productions')\
 
         self.productions_frames = []
 
         for i, key in enumerate(productions.keys()):
-            meta_frame, production_frame = self.add_production_frame(productions[key], self.frames['Productions List'], i)
-            self.persons_frames.append(production_frame)
+            meta_frame, prod_frame = self.add_production_frame(productions[key], self.frames['Productions List'], i)
+            self.productions_frames.append(prod_frame)
             meta_frame.pack(fill=X, expand=True)
+
+        # print(self.frames['Productions List'].children)
+        # print(self.productions_frames)
 
     def add_production_frame(self, person, parent, index):
         if index % 2 == 0:
@@ -157,7 +161,7 @@ class Window(Frame):
 
     def add_events_frame(self):
         events_frame = Frame(self, bg=self.theme['Background'])
-        self.frames['Events List'] = Frame()
+        self.frames['Events List'] = None
         self.frames.update({'Events': events_frame})
 
     def update_events_frame(self, events):
@@ -167,7 +171,7 @@ class Window(Frame):
 
         for i, key in enumerate(events.keys()):
             meta_frame, event_frame = self.add_event_frame(events[key], self.frames['Events List'], i)
-            self.persons_frames.append(event_frame)
+            self.events_frames.append(event_frame)
             meta_frame.pack(fill=X, expand=True)
 
     def add_event_frame(self, event, parent, index):
@@ -198,12 +202,17 @@ class Window(Frame):
                              self.controller.current_event())
 
     def reset_frame(self, frame_name, frame_parent):
-        if self.frames.get(frame_name) is not None:
-            self.frames[frame_name].pack_forget()
-            self.frames[frame_name].destroy()
-
-        self.frames[frame_name] = Frame(self.frames[frame_parent])
-        self.frames[frame_name].pack(fill=X)
+        if self.frames[frame_name] is not None:
+            keys = self.frames[frame_name].children.keys()
+            for key in keys:
+                child = self.frames[frame_name].children[key]
+                child.pack_forget()
+        if self.frames.get(frame_name) is not None and self.frames.get(frame_name).child_frame is not None:
+            self.frames[frame_name].reset_child()
+        else:
+            # self.frames[frame_name] = Frame(self.frames[frame_parent])
+            self.frames[frame_name] = ScrollFrame(self, holder_frame=self.frames[frame_parent])
+            self.frames[frame_name].pack(fill=X)
 
     def list_color(self, index):
         if index % 2 == 0:
