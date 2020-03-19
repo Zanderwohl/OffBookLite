@@ -3,15 +3,15 @@ from tkinter import *
 
 class ScrollFrame(Frame):
     def __init__(self, view, holder_frame=None):
-        super(ScrollFrame, self).__init__(holder_frame)
+        super(ScrollFrame, self).__init__(holder_frame, background='#0000FF')
         self.view = view
-        self.canvas = Canvas(self)
-        self.child_frame = Frame(self.canvas)
-        self.scrollbar = Scrollbar(holder_frame, orient="vertical", command=self.canvas.yview)
+        self.canvas = Canvas(self, background='#FF0000')
+        self.child_frame = Frame(self.canvas, background='#00FF00')
+        self.scrollbar = Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.canvas.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.pack(side='right', fill='y')
-        self.canvas.pack(side='left', fill='x')
-        self.child_frame.pack()
+        self.canvas.pack(side='left', fill=BOTH, expand=True)
+        self.child_frame.pack(fill=BOTH, expand=True)
         self.items = []
 
     def add(self, item):

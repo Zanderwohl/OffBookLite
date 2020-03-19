@@ -93,7 +93,8 @@ class Window(Frame):
 
         # print(persons)
         for i, key in enumerate(persons):
-            meta_frame, person_frame = self.add_person_frame(persons[key], self.frames['Persons List'], i)
+            meta_frame, person_frame = self.add_person_frame(persons[key],
+                                                             self.frames['Persons List'].child_frame, i)
             # print(person_frame)
             self.persons_frames.append(person_frame)
             meta_frame.pack(fill=X, expand=True)
@@ -119,7 +120,7 @@ class Window(Frame):
 
         for i, key in enumerate(institutions):
             meta_frame, institution_frame = self.add_institution_frame(institutions[key],
-                                                                        self.frames['Institutions List'], i)
+                                                                       self.frames['Institutions List'].child_frame, i)
             self.persons_frames.append(institution_frame)
             meta_frame.pack(fill=X, expand=True)
 
@@ -138,12 +139,13 @@ class Window(Frame):
         self.frames.update({'Productions': productions_frame})
 
     def update_productions_frame(self, productions):
-        self.reset_frame('Productions List', 'Productions')\
+        self.reset_frame('Productions List', 'Productions')
 
         self.productions_frames = []
 
         for i, key in enumerate(productions.keys()):
-            meta_frame, prod_frame = self.add_production_frame(productions[key], self.frames['Productions List'], i)
+            meta_frame, prod_frame = self.add_production_frame(productions[key],
+                                                               self.frames['Productions List'].child_frame, i)
             self.productions_frames.append(prod_frame)
             meta_frame.pack(fill=X, expand=True)
 
@@ -170,7 +172,7 @@ class Window(Frame):
         self.events_frames = []
 
         for i, key in enumerate(events.keys()):
-            meta_frame, event_frame = self.add_event_frame(events[key], self.frames['Events List'], i)
+            meta_frame, event_frame = self.add_event_frame(events[key], self.frames['Events List'].child_frame, i)
             self.events_frames.append(event_frame)
             meta_frame.pack(fill=X, expand=True)
 
@@ -203,16 +205,11 @@ class Window(Frame):
 
     def reset_frame(self, frame_name, frame_parent):
         if self.frames[frame_name] is not None:
-            keys = self.frames[frame_name].children.keys()
-            for key in keys:
-                child = self.frames[frame_name].children[key]
-                child.pack_forget()
-        if self.frames.get(frame_name) is not None and self.frames.get(frame_name).child_frame is not None:
-            self.frames[frame_name].reset_child()
-        else:
-            # self.frames[frame_name] = Frame(self.frames[frame_parent])
-            self.frames[frame_name] = ScrollFrame(self, holder_frame=self.frames[frame_parent])
-            self.frames[frame_name].pack(fill=X)
+            self.frames[frame_name].pack_forget()
+            self.frames[frame_name].destroy()
+            self.frames[frame_name] = None
+        self.frames[frame_name] = ScrollFrame(self, holder_frame=self.frames[frame_parent])
+        self.frames[frame_name].pack(fill=X)
 
     def list_color(self, index):
         if index % 2 == 0:
