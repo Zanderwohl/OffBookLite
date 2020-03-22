@@ -16,11 +16,11 @@ class ScrollFrame(Frame):
         self.scrollbar.pack(side=RIGHT, fill=Y)
         self.scrollbar.config(command=self.canvas.yview)
         self.canvas.pack(fill=BOTH, expand=True)
-        self.child_frame.pack()
+        self.child_frame.pack(fill=BOTH, expand=True)
         self.canvas.bind_all('<MouseWheel>', self._on_mousewheel)
         # self.canvas.create_text(100, 100, text='hello world')
-        self.canvas.create_window((0, 0), window=self.child_frame, anchor='nw')
-        self.child_frame.config(width=self.canvas.cget('width'))
+        self.canvas_window = self.canvas.create_window((0, 0), window=self.child_frame, anchor='nw')
+        self.canvas.bind('<Configure>', self._on_frame_change)
 
     def add(self, item):
         self.items.append(item)
@@ -29,11 +29,10 @@ class ScrollFrame(Frame):
     def get_canvas(self):
         return self.canvas
 
-    def set_bbox(self):
-        print('Bounding box',  self.canvas.bbox(ALL))
-        self.canvas.config(scrollregion=self.canvas.bbox(ALL))
-        # self.canvas.config(scrollregion=(0, 0, 10000, 10000))
-
     def _on_mousewheel(self, event):
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), 'units')
+
+    def _on_frame_change(self, event):
+        canvas_width = event.width
+        self.canvas.itemconfig(self.canvas_window, width=canvas_width)
 

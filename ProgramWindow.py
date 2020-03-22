@@ -149,9 +149,6 @@ class Window(Frame):
             self.productions_frames.append(prod_frame)
             meta_frame.pack(fill=X, expand=True)
 
-        # print(self.frames['Productions List'].children)
-        # print(self.productions_frames)
-
     def add_production_frame(self, person, parent, index):
         if index % 2 == 0:
             color = self.theme['List A']
@@ -175,7 +172,6 @@ class Window(Frame):
             meta_frame, event_frame = self.add_event_frame(events[key], self.frames['Events List'].child_frame, i)
             self.events_frames.append(event_frame)
             meta_frame.pack(fill=X, expand=True)
-        self.frames['Events List'].set_bbox()
 
     def add_event_frame(self, event, parent, index):
         if index % 2 == 0:
