@@ -11,7 +11,7 @@ class QOTD(Label):
     def generate_quote(self, quotes):
         time = str(strftime('%Y')) + str(strftime('%m')) + str(strftime('%d'))
         random.seed(int(time))
-        index = random.randint(0, len(quotes))
+        index = random.randint(0, len(quotes) - 1)
         quote = quotes[str(index)]
         content = quote['quote'] + '\n\t-' + quote['author']
         super().config(text=content)
