@@ -211,7 +211,7 @@ class Window(Frame):
             self.frames[frame_name] = None
         self.frames[frame_name] = ScrollFrame(self, holder_frame=self.frames[frame_parent])
         # self.frames[frame_name] = Frame(self)
-        self.frames[frame_name].pack(fill=BOTH)
+        self.frames[frame_name].pack(fill=BOTH, expand=True)
 
     def list_color(self, index):
         if index % 2 == 0:
