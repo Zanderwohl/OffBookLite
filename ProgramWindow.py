@@ -205,7 +205,7 @@ class Window(Frame):
             self.frames[frame_name].pack_forget()
             self.frames[frame_name].destroy()
             self.frames[frame_name] = None
-        self.frames[frame_name] = ScrollFrame(self, holder_frame=self.frames[frame_parent])
+        self.frames[frame_name] = ScrollFrame(self, self.theme, holder_frame=self.frames[frame_parent])
         # self.frames[frame_name] = Frame(self)
         self.frames[frame_name].pack(fill=BOTH, expand=True)
 
