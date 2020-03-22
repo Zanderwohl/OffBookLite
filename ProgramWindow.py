@@ -94,7 +94,7 @@ class Window(Frame):
         # print(persons)
         for i, key in enumerate(persons):
             meta_frame, person_frame = self.add_person_frame(persons[key],
-                                                             self.frames['Persons List'].child_frame, i)
+                                                             self.frames['Persons List'].canvas, i)
             # print(person_frame)
             self.persons_frames.append(person_frame)
             meta_frame.pack(fill=X, expand=True)
@@ -120,7 +120,7 @@ class Window(Frame):
 
         for i, key in enumerate(institutions):
             meta_frame, institution_frame = self.add_institution_frame(institutions[key],
-                                                                       self.frames['Institutions List'].child_frame, i)
+                                                                       self.frames['Institutions List'].canvas, i)
             self.persons_frames.append(institution_frame)
             meta_frame.pack(fill=X, expand=True)
 
@@ -145,7 +145,7 @@ class Window(Frame):
 
         for i, key in enumerate(productions.keys()):
             meta_frame, prod_frame = self.add_production_frame(productions[key],
-                                                               self.frames['Productions List'].child_frame, i)
+                                                               self.frames['Productions List'].canvas, i)
             self.productions_frames.append(prod_frame)
             meta_frame.pack(fill=X, expand=True)
 
@@ -172,10 +172,10 @@ class Window(Frame):
         self.events_frames = []
 
         for i, key in enumerate(events.keys()):
-            meta_frame, event_frame = self.add_event_frame(events[key], self.frames['Events List'].child_frame, i)
+            meta_frame, event_frame = self.add_event_frame(events[key], self.frames['Events List'].canvas, i)
             self.events_frames.append(event_frame)
             meta_frame.pack(fill=X, expand=True)
-        self.frames['Events List'].set()
+        self.frames['Events List'].set_bbox()
 
     def add_event_frame(self, event, parent, index):
         if index % 2 == 0:
@@ -210,7 +210,8 @@ class Window(Frame):
             self.frames[frame_name].destroy()
             self.frames[frame_name] = None
         self.frames[frame_name] = ScrollFrame(self, holder_frame=self.frames[frame_parent])
-        self.frames[frame_name].pack(fill=X)
+        # self.frames[frame_name] = Frame(self)
+        self.frames[frame_name].pack(fill=BOTH, padx=10, pady=10)
 
     def list_color(self, index):
         if index % 2 == 0:
