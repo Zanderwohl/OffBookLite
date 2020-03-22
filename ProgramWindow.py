@@ -175,6 +175,7 @@ class Window(Frame):
             meta_frame, event_frame = self.add_event_frame(events[key], self.frames['Events List'].child_frame, i)
             self.events_frames.append(event_frame)
             meta_frame.pack(fill=X, expand=True)
+        self.frames['Events List'].set()
 
     def add_event_frame(self, event, parent, index):
         if index % 2 == 0:
