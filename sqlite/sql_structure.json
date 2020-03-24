@@ -1,0 +1,73 @@
+{
+"tables":{
+	"Institutions":{
+		"columns":[
+			{"name":"id", "type":"INTEGER", "key":"true", "autoincrement":"true"},
+			{"name":"name", "type":"TEXT", "notnull":"true"},
+			{"name":"deleted", "type":"BOOLEAN", "default":"(false)"},
+			{"name":"latUpdated", "type":"DATETIME", "default":"CURRENT_TIMESTAMP"}
+		]
+	},
+	"Persons":{
+		"columns":[
+			{"name":"id", "type":"INTEGER", "key":"true", "autoincrement":"true"},
+			{"name":"fName", "type":"TEXT", "default":"''"},
+			{"name":"lName", "type":"TEXT", "default":"''"},
+			{"name":"institutionId", "type":"INTEGER", "references":"Institutions(id)"},
+			{"name":"deleted", "type":"BOOLEAN", "default":"(false)"},
+			{"name":"lastUpdated", "type":"DATETIME", "default":"CURRENT_TIMESTAMP"},
+			{"name":"icon", "type":"TEXT", "default":"'default.png'"}
+		]
+	},
+	"Productions":{
+		"columns":[
+			{"name":"id", "type":"INTEGER", "key":"true", "autoincrement":"true"},
+			{"name":"name", "type":"TEXT"},
+			{"name":"description", "type":"TEXT"},
+			{"name":"institutionId", "type":"INTEGER", "references":"Institutions(id)"},
+			{"name":"startDate", "type":"DATETIME"},
+			{"name":"endDate", "type":"DATETIME"},
+			{"name":"deleted", "type":"BOOLEAN", "default":"(false)"},
+			{"name":"lastUpdated", "type":"DATETIME", "default":"CURRENT_TIMESTAMP"}
+		]
+	},
+	"Events":{
+		"columns":[
+			{"name":"id", "type":"INTEGER", "key":"true", "autoincrement":"true"},
+			{"name":"name", "type":"TEXT"},
+			{"name":"description", "type":"TEXT"},
+			{"name":"startDate", "type":"DATETIME"},
+			{"name":"endDate", "type":"DATETIME"},
+			{"name":"productionId", "type":"INTEGER", "references":"Productions(id)"},
+			{"name":"deleted", "type":"BOOLEAN", "default":"(false)"},
+			{"name":"lastUpdated", "type":"DATETIME", "default":"CURRENT_TIMESTAMP"}
+		]
+	},
+	"Roles":{
+		"columns":[
+			{"name":"id", "type":"INTEGER", "key":"true", "autoincrement":"true"},
+			{"name":"institutionId", "type":"INTEGER", "references":"Institutions(id)"},
+			{"name":"name", "type":"TEXT"},
+			{"name":"shortName", "type":"TEXT"}
+		]
+	},
+	"PersonProductionRoles":{
+		"columns":[
+			{"name":"person", "type":"INTEGER", "references":"Persons(id)"},
+			{"name":"production", "type":"INTEGER", "references":"Productions(id)"},
+			{"name":"role", "type":"INTEGER", "references":"Roles(id)"},
+			{"name":"lastUpdated", "type":"DATETIME", "default":"CURRENT_TIMESTAMP"}
+		]
+	},
+	"Quotes":{
+		"columns":[
+			{"name":"quote", "type":"TEXT"},
+			{"name":"author", "type":"TEXT"}
+		]
+	}
+},
+"views":{
+	"EventsWithInstitutions":{"some":"thing"},
+	"PersonProductionRoleView":{"some":"thing"}
+}
+}
