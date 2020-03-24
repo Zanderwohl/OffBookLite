@@ -61,7 +61,8 @@ def install_database():
         lName TEXT DEFAULT '',
         institutionId INTEGER REFERENCES Institutions(id),
         deleted         BOOLEAN DEFAULT (false),
-        lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP
+        lastUpdated     DATETIME DEFAULT CURRENT_TIMESTAMP,
+        icon            TEXT DEFAULT 'default.png'
     );''')
     dbc.execute('''CREATE TABLE Productions (
         id              INTEGER  PRIMARY KEY AUTOINCREMENT,
@@ -145,7 +146,7 @@ def get_persons(institution_id=None, production_id=None):
     else:
         pass  # TODO: Push the normal query under here.
     dbc.execute('''SELECT * FROM Persons ''' + SQLPrepare.where_and(conditions) + ';', args)
-    return convert_query(dbc, ['id', 'fName', 'lName', 'institutionId'])
+    return convert_query(dbc, ['id', 'fName', 'lName', 'institutionId', 'deleted', 'lastUpdated', 'icon'])
 
 
 def get_persons_updates():

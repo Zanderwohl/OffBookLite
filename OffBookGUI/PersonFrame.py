@@ -13,6 +13,7 @@ class PersonFrame:
         self.role_id = person_data.get('roleId')
         self.role_name = person_data.get('roleName')
         self.role_name_short = person_data.get('shortRoleName')
+        self.icon = person_data.get('icon')
         self.expanded = False
         self.unsaved = False
         self.theme = theme
@@ -55,13 +56,15 @@ class PersonFrame:
         frame.columnconfigure(3, weight=1)
         name_text = self.f_name + ' ' + self.l_name
         name_label = Label(frame, text=name_text, padx=10, pady=10,  fg=self.theme['Text'], bg=self.color)  # bg=color
-        name_label.grid(column=1, row=0)
+        name_label.grid(column=2, row=0)
         expand_button = Button(frame, text="More", padx=10,
                                command=lambda: self.switch_frame(self.color, 'expanded'))
         expand_button.grid(column=3, row=0)
         edit_button = Button(frame, text='Edit', padx=10,
                              command=lambda: self.switch_frame(self.color, 'edit'))
         edit_button.grid(column=0, row=0)
+        icon = self.create_icon(frame)
+        icon.grid(column=1, row=0)
         return frame
 
     def create_expanded_frame(self):
@@ -76,24 +79,36 @@ class PersonFrame:
         frame.rowconfigure(5, weight=1)
         name_text = self.f_name + ' ' + self.l_name
         name_label = Label(frame, text=name_text, padx=10, pady=60, fg=self.theme['Text'], bg=self.color)
-        name_label.grid(column=1, row=0)
+        name_label.grid(column=2, row=0)
         expand_button = Button(frame, text="Less", padx=10,
                                command=lambda: self.switch_frame(self.color, 'minimal'))
         expand_button.grid(column=3, row=0)
         edit_button = Button(frame, text='Edit', padx=10,
                              command=lambda: self.switch_frame(self.color, 'edit'))
         edit_button.grid(column=0, row=0)
+        icon = self.create_icon(frame)
+        icon.grid(column=1, row=0)
         return frame
 
     def create_edit_frame(self):
         frame = Frame(self.holder_frame)
         name_text = self.f_name + ' ' + self.l_name
         name_label = Label(frame, text=name_text, padx=10, pady=60, fg=self.theme['Text'], bg=self.color)
-        name_label.grid(column=1, row=0)
+        name_label.grid(column=2, row=0)
         retract_button = Button(frame, text='Save', padx=10,
                                 command=lambda: self.switch_frame(self.color, 'save'))
         retract_button.grid(column=0, row=0)
+        icon = self.create_icon(frame)
+        icon.grid(column=1, row=0)
         return frame
+
+    def create_icon(self, parent):
+        icon = Canvas(parent, width=50, height=40)
+        file_path = 'user_icons/' + self.icon
+        print(file_path)
+        image = PhotoImage(file=file_path)
+        icon.create_image(0, 0, anchor=NW, image=image)
+        return icon
 
     def save(self):
         self.unsaved = False
